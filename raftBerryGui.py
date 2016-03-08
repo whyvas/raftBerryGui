@@ -1,7 +1,7 @@
 import Tkinter as tk
 from Tkinter import *
 from tkColorChooser import askcolor  
-from subprocess import call
+import subprocess
 
 
 BUTTON_FONT=("Helvettica",32)
@@ -25,7 +25,7 @@ class raftBerry(tk.Tk):
         for F in (StartPage, NavPage, MapPage, LightPage, MultiPage, RocketPage, ExitPage):
         	frame = F(container, self)
         	self.frames[F] = frame
-		for x in range(3):
+		for x in range(10):
 	       	        frame.columnconfigure(x, weight=1)
 	        for y in range(10):
                 	frame.rowconfigure(y, weight=1)
@@ -104,11 +104,16 @@ class RocketPage(tk.Frame):
         tk.Frame.__init__(self,parent)
 
         label = tk.Label(self, text="Rocket Launcher Page", font=LARGE_FONT).grid(row=0, column=0, sticky="NSEW", columnspan=2)
-        Mbutton =tk.Button(self,text="Main Page",font=BUTTON_FONT,command=lambda:controller.show_frame(StartPage)).grid(row=1, column=0, sticky="NSEW")
+	launchbutton =tk.Button(self,text="Initiate Launch",font=BUTTON_FONT,command=lambda:speak("Initiating Launch Sequence")).grid(row=1, column=0, sticky="NSEW")
+	azimuthScale =tk.Scale(orient=tk.HORIZONTAL, label="Azimuth", ).grid(row=2, column=0, sticky="NSEW")
+        Mbutton =tk.Button(self,text="Main Page",font=BUTTON_FONT,command=lambda:controller.show_frame(StartPage)).grid(row=3, column=0, columnspan=2, sticky="NSEW")
 
 def getColor():
 	color = askcolor()
 	print color
+
+def speak(text):
+	subprocess.Popen(["espeak", "-v", "female3", text])
 
 app = raftBerry()
 app.attributes('-zoomed', True)
