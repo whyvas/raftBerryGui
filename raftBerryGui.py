@@ -1,3 +1,10 @@
+#raftBerryGui code to upgrade the previous version of the raftBerry
+#
+#Frame manager code derived from youtube user sentdex 
+#Special thanks to reddit user novel_yet_trivial for helping with grid issues.
+
+
+
 import Tkinter as tk
 from Tkinter import *
 from tkColorChooser import askcolor  
