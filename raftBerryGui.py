@@ -9,14 +9,14 @@ from tkColorChooser import askcolor
 import subprocess
 import ttk
 
-VERSION="raftBerry v0.1"
+VERSION="raftBerry v0.2"
 
 class raftBerry(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         
         tk.Tk.__init__(self, *args, **kwargs)
-#        tk.Tk.iconbitmap(self,default='clienticon.ico')
+        tk.Tk.iconbitmap(self,default='raftBerrypi.xbm')
         tk.Tk.wm_title(self, VERSION)
 	self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
@@ -145,4 +145,5 @@ def speak(text):
 
 app = raftBerry()
 app.attributes('-zoomed', True)
+app.master.iconbitmap('favicon.ico')
 app.mainloop()
