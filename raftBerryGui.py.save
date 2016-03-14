@@ -4,10 +4,15 @@
 #Special thanks to reddit user novel_yet_trivial for helping with grid issues.
 
 from Tkinter import *
+import ttk
 import Tkinter as tk
 from tkColorChooser import askcolor  
 import subprocess
-import ttk
+
+
+s = ttk.Style()
+s.theme_use('clam')
+s.configure('clam', font='helvetica 24')
 
 VERSION="raftBerry v0.1"
 
@@ -20,13 +25,12 @@ class raftBerry(tk.Tk):
         tk.Tk.wm_title(self, VERSION)
 	self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
-	self.style = ttk.Style()
-	self.style.configure('.',font=('Helvetica', 36))
 	container = ttk.Frame(self)
 	container.columnconfigure(0, weight=1)
 	container.rowconfigure(0, weight=1)
 	container.grid(row=0, column=0, sticky=N+S+E+W)
-	self.frames = {}
+
+        self.frames = {}
 
         for F in (StartPage, NavPage, MapPage, LightPage, MultiPage, RocketPage, ExitPage):
         	frame = F(container, self)
@@ -48,7 +52,7 @@ class StartPage(ttk.Frame):
 	for y in range(4):
 		self.rowconfigure(y, weight=1)
         
-        label = ttk.Label(self, text="raftBerry Menu").grid(row=0, column=0, columnspan=3, sticky=N+S+E+W)
+        label = ttk.Label(self, text="raftBerry Menu").grid(row=0, column=0, columnspan=2, sticky=N+S+E+W)
         Navbutton =ttk.Button(self, text="Navigation", command=lambda: controller.show_frame(NavPage)).grid(row=1, column=0, sticky=N+S+E+W)
 	Mapbutton =ttk.Button(self, text="Map", command=lambda: controller.show_frame(MapPage)).grid(row=1, column=1, sticky=N+S+E+W)
 	Lightbutton =ttk.Button(self, text="Lighting", command=lambda: controller.show_frame(LightPage)).grid(row=2, column=0, sticky=N+S+E+W)
