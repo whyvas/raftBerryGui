@@ -13,27 +13,30 @@ VERSION="raftBerry v0.2"
 class raftBerry(tk.Tk):
 
     def __init__(self, *args, **kwargs):
-        
-        tk.Tk.__init__(self, *args, **kwargs)
+	tk.Tk.__init__(self, *args, **kwargs)
         tk.Tk.wm_title(self, VERSION)
+	#Set window icon
 	img = PhotoImage(file='images/raftBerryPi.gif')
 	self.tk.call('wm', 'iconphoto', self._w, img)
+
 	self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
+	#Set styles
 	self.style = ttk.Style()
-	self.style.configure('.',font=('Helvetica', 36))
+	self.style.configure('.',font=('Helvetica', 36),background='black', foreground='white')
+
 	container = ttk.Frame(self)
 	container.columnconfigure(0, weight=1)
 	container.rowconfigure(0, weight=1)
 	container.grid(row=0, column=0, sticky=N+S+E+W)
 	self.frames = {}
 
-        for F in (StartPage, NavPage, MapPage, LightPage, MultiPage, RocketPage, ExitPage, LogoPage):
+        for F in (LogoPage, StartPage, NavPage, MapPage, LightPage, MultiPage, RocketPage, ExitPage):
         	frame = F(container, self)
         	self.frames[F] = frame
 		frame.grid(row=0, column=0, sticky=N+S+E+W)
 	
-        self.show_frame(LogoPage)
+	self.show_frame(StartPage)
 
     def show_frame(self, cont):
         frame = self.frames[cont]
@@ -49,7 +52,7 @@ class StartPage(ttk.Frame):
 	for y in range(4):
 		self.rowconfigure(y, weight=1)
         
-        label = ttk.Label(self, text="raftBerry Menu").grid(row=0, column=0, columnspan=3, sticky="NSEW")
+        label = ttk.Label(self, text="raftBerry Menu", anchor=tk.CENTER).grid(row=0, column=0, columnspan=3, sticky="NSEW")
         Navbutton =ttk.Button(self, text="Navigation", command=lambda: controller.show_frame(NavPage)).grid(row=1, column=0, sticky=N+S+E+W)
 	Mapbutton =ttk.Button(self, text="Map", command=lambda: controller.show_frame(MapPage)).grid(row=1, column=1, sticky=N+S+E+W)
 	Lightbutton =ttk.Button(self, text="Lighting", command=lambda: controller.show_frame(LightPage)).grid(row=2, column=0, sticky=N+S+E+W)
@@ -76,9 +79,12 @@ class LogoPage(ttk.Frame):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 	canvas = Canvas(self, width=800, height=480)
+	canvas.create_line(0, 0, 200, 100)
+	logo = ImageTk.PhotoImage(file="images/raftBerryPi.png")
+	canvas.create_image(400,240,image=logo)
+	label = Label(image=logo)
+	label.image = logo # keep a reference!
 	canvas.grid(row=0, column=0, sticky="NSEW")
-	photoimage = ImageTk.PhotoImage(file="images/raftBerryPi.png")
-	canvas.create_image(0,0,image=photoimage)
 
 
 
@@ -157,6 +163,19 @@ def getColor():
 def speak(text):
 	subprocess.Popen(["espeak", "-v", "female3", text])
 
+def serialIO():
+	#Setup serial read and write here
+	print("Reading and writing from serial port.")
+	app.after(100, serialIO) 
+
 app = raftBerry()
-app.attributes('-zoomed', True)
+app.after(100, serialIO)
+app.attributes("-fullscreen", True)
+app.config(cursor='none')
+
+#open serial connection here
+app.show_frame(LogoPage)
+app.update()
+time.sleep(1)
+app.show_frame(StartPage)
 app.mainloop()
