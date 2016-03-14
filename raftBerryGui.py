@@ -6,8 +6,7 @@
 from Tkinter import *
 import Tkinter as tk
 from tkColorChooser import askcolor  
-import subprocess
-import ttk
+import subprocess, ttk, time, ImageTk
 
 VERSION="raftBerry v0.2"
 
@@ -16,8 +15,9 @@ class raftBerry(tk.Tk):
     def __init__(self, *args, **kwargs):
         
         tk.Tk.__init__(self, *args, **kwargs)
-        tk.Tk.iconbitmap(self,default='raftBerrypi.xbm')
         tk.Tk.wm_title(self, VERSION)
+	img = PhotoImage(file='images/raftBerryPi.gif')
+	self.tk.call('wm', 'iconphoto', self._w, img)
 	self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 	self.style = ttk.Style()
@@ -28,11 +28,12 @@ class raftBerry(tk.Tk):
 	container.grid(row=0, column=0, sticky=N+S+E+W)
 	self.frames = {}
 
-        for F in (StartPage, NavPage, MapPage, LightPage, MultiPage, RocketPage, ExitPage):
+        for F in (StartPage, NavPage, MapPage, LightPage, MultiPage, RocketPage, ExitPage, LogoPage):
         	frame = F(container, self)
         	self.frames[F] = frame
 		frame.grid(row=0, column=0, sticky=N+S+E+W)
-        self.show_frame(StartPage)
+	
+        self.show_frame(LogoPage)
 
     def show_frame(self, cont):
         frame = self.frames[cont]
@@ -48,7 +49,7 @@ class StartPage(ttk.Frame):
 	for y in range(4):
 		self.rowconfigure(y, weight=1)
         
-        label = ttk.Label(self, text="raftBerry Menu").grid(row=0, column=0, columnspan=3, sticky=N+S+E+W)
+        label = ttk.Label(self, text="raftBerry Menu").grid(row=0, column=0, columnspan=3, sticky="NSEW")
         Navbutton =ttk.Button(self, text="Navigation", command=lambda: controller.show_frame(NavPage)).grid(row=1, column=0, sticky=N+S+E+W)
 	Mapbutton =ttk.Button(self, text="Map", command=lambda: controller.show_frame(MapPage)).grid(row=1, column=1, sticky=N+S+E+W)
 	Lightbutton =ttk.Button(self, text="Lighting", command=lambda: controller.show_frame(LightPage)).grid(row=2, column=0, sticky=N+S+E+W)
@@ -67,6 +68,19 @@ class NavPage(ttk.Frame):
 
         label = ttk.Label(self, text="Navigation").grid(row=0, column=0, sticky="NSEW", columnspan=2)
         Mbutton =ttk.Button(self,text="Main Page",command=lambda:controller.show_frame(StartPage)).grid(row=1, column=0, sticky="NSEW")
+
+class LogoPage(ttk.Frame):
+
+    def __init__(self, parent, controller):
+        ttk.Frame.__init__(self,parent)
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+	canvas = Canvas(self, width=800, height=480)
+	canvas.grid(row=0, column=0, sticky="NSEW")
+	photoimage = ImageTk.PhotoImage(file="images/raftBerryPi.png")
+	canvas.create_image(0,0,image=photoimage)
+
+
 
 class ExitPage(ttk.Frame):
 
@@ -145,5 +159,4 @@ def speak(text):
 
 app = raftBerry()
 app.attributes('-zoomed', True)
-app.master.iconbitmap('favicon.ico')
 app.mainloop()
