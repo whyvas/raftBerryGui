@@ -1,4 +1,4 @@
-#raftBerryGui code to upgrade the previous version of the raftBerry
+#raftBerryGui code to update the previous version of the raftBerry and add absurd features.
 #
 #Frame manager code derived from youtube user sentdex 
 #Special thanks to reddit user novel_yet_trivial for helping with grid issues.
@@ -9,6 +9,8 @@ from tkColorChooser import askcolor
 import subprocess, ttk, time, ImageTk
 
 VERSION="raftBerry v0.2"
+
+code=""
 
 class raftBerry(tk.Tk):
 
@@ -23,7 +25,7 @@ class raftBerry(tk.Tk):
         self.columnconfigure(0, weight=1)
 	#Set styles
 	self.style = ttk.Style()
-	self.style.configure('.',font=('Helvetica', 36),background='black', foreground='white')
+	self.style.configure('.',font=('Helvetica', 36),background='black', foreground='white', sliderthickness=80, troughcolor='black', borderwidth=5, highlightbackground='red')
 
 	container = ttk.Frame(self)
 	container.columnconfigure(0, weight=1)
@@ -31,7 +33,7 @@ class raftBerry(tk.Tk):
 	container.grid(row=0, column=0, sticky=N+S+E+W)
 	self.frames = {}
 
-        for F in (LogoPage, StartPage, NavPage, MapPage, LightPage, MultiPage, RocketPage, ExitPage):
+        for F in (LogoPage, StartPage, NavPage, MapPage, LightPage, MultiPage, RocketPage, ExitPage, CodePage):
         	frame = F(container, self)
         	self.frames[F] = frame
 		frame.grid(row=0, column=0, sticky=N+S+E+W)
@@ -71,6 +73,30 @@ class NavPage(ttk.Frame):
 
         label = ttk.Label(self, text="Navigation").grid(row=0, column=0, sticky="NSEW", columnspan=2)
         Mbutton =ttk.Button(self,text="Main Page",command=lambda:controller.show_frame(StartPage)).grid(row=1, column=0, sticky="NSEW")
+
+class CodePage(ttk.Frame):
+
+    def __init__(self, parent, controller):
+        ttk.Frame.__init__(self,parent)
+        for x in range(4):
+                self.columnconfigure(x, weight=1)
+        for y in range(3):
+                self.rowconfigure(y, weight=1)
+
+        #label = ttk.Label(self, text="raftBerry Menu", anchor=tk.CENTER).grid(row=0, column=0, columnspan=3, sticky="NSEW")
+        ttk.Button(self, text="1", command=lambda: enterCode(str(1))).grid(row=2, column=0, sticky=N+S+E+W)
+        ttk.Button(self, text="2", command=lambda: enterCode(str(2))).grid(row=2, column=1, sticky=N+S+E+W)
+        ttk.Button(self, text="3", command=lambda: enterCode(str(3))).grid(row=2, column=2, sticky=N+S+E+W)
+        ttk.Button(self, text="4", command=lambda: enterCode(str(4))).grid(row=1, column=0, sticky=N+S+E+W)
+        ttk.Button(self, text="5", command=lambda: enterCode(str(5))).grid(row=1, column=1, sticky=N+S+E+W)
+        ttk.Button(self, text="6", command=lambda: enterCode(str(6))).grid(row=1, column=2, sticky=N+S+E+W)
+        ttk.Button(self, text="7", command=lambda: enterCode(str(7))).grid(row=0, column=0, sticky=N+S+E+W)
+        ttk.Button(self, text="8", command=lambda: enterCode(str(8))).grid(row=0, column=1, sticky=N+S+E+W)
+        ttk.Button(self, text="9", command=lambda: enterCode(str(9))).grid(row=0, column=2, sticky=N+S+E+W)
+	ttk.Button(self, text="0", command=lambda: enterCode(str(0))).grid(row=0, column=3, sticky=N+S+E+W)
+        ttk.Button(self, text="Reset", command=lambda: enterCode("reset")).grid(row=1, column=3, sticky=N+S+E+W)
+        MButton =ttk.Button(self, text="Cancel", command=lambda: controller.show_frame(StartPage)).grid(row=2, column=3, sticky=N+S+E+W)
+
 
 class LogoPage(ttk.Frame):
 
@@ -138,8 +164,8 @@ class MultiPage(ttk.Frame):
         label = ttk.Label(self, text="Multimedia").grid(row=0, column=0, sticky="NSEW", columnspan=2)
 	projector = IntVar()
 	nes = IntVar()
-	Checkbutton(self, text="Projector",relief=tk.RAISED, variable=projector, padx=10, pady=10).grid(row=1,column=0, sticky="NSEW")
-	Checkbutton(self, text="NES",relief=tk.RAISED, variable=nes, padx=10, pady=10).grid(row=2,column=0, sticky="NSEW")
+	ttk.Checkbutton(self, text="Projector", variable=projector).grid(row=1,column=0, sticky="NSEW")
+	ttk.Checkbutton(self, text="NES", variable=nes).grid(row=2,column=0, sticky="NSEW")
         Mbutton =ttk.Button(self,text="Main Page",command=lambda:controller.show_frame(StartPage)).grid(row=3, column=0, sticky="NSEW")
 
 class RocketPage(ttk.Frame):
@@ -148,18 +174,25 @@ class RocketPage(ttk.Frame):
         ttk.Frame.__init__(self,parent)
 	for x in range(2):
                 self.columnconfigure(x, weight=1)
-        for y in range(4):
+        for y in range(3):
                 self.rowconfigure(y, weight=1)
-        label = ttk.Label(self, text="Rocket Launcher Page").grid(row=0, column=0, sticky="NSEW", columnspan=2)
-	launchbutton =ttk.Button(self,text="Initiate Launch",command=lambda:speak("Initiating Launch Sequence")).grid(row=1, column=0, sticky="NSEW")
-#	azimuthScale =ttk.Scale(self, orient=tk.HORIZONTAL, label="Azimuth", ).grid(row=2, column=0, sticky="NSEW")
-#	elevationScale = ttk.Scale(self, orient=tk.VERTICAL, label="Elevation", ).grid(row=0, column=2, sticky="NSEW")
-        Mbutton =ttk.Button(self,text="Main Page",command=lambda:controller.show_frame(StartPage)).grid(row=3, column=0, sticky="NSEW")
+        label = ttk.Label(self, text="Rocket Launcher", anchor='center').grid(row=0, column=0, columnspan=3, sticky="NSEW")
+	launchbutton =ttk.Button(self,text="Initiate Launch",command=lambda:controller.show_frame(CodePage)).grid(row=1, column=0, sticky="NSEW")
+	azimuthScale =ttk.Scale(self, orient=tk.HORIZONTAL, from_ = 1, to = 100).grid(row=3, column=0, columnspan=2, sticky="NSEW")
+	elevationScale = ttk.Scale(self, orient=tk.VERTICAL, from_ = 1, to = 100).grid(row=1, column=1, rowspan=3, sticky="NSEW")
+        Mbutton =ttk.Button(self,text="Main Page",command=lambda:controller.show_frame(StartPage)).grid(row=2, column=0, sticky="NSEW")
 
 def getColor():
 	color = askcolor()
 	print color
 
+def enterCode(i):
+	global code
+	if i == 'reset':
+		code=''
+	else:
+		code+=i
+		print(code)
 def speak(text):
 	subprocess.Popen(["espeak", "-v", "female3", text])
 
@@ -169,7 +202,7 @@ def serialIO():
 	app.after(100, serialIO) 
 
 app = raftBerry()
-app.after(100, serialIO)
+#app.after(100, serialIO)
 app.attributes("-fullscreen", True)
 app.config(cursor='none')
 
