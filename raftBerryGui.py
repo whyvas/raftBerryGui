@@ -93,7 +93,7 @@ class CodePage(ttk.Frame):
         ttk.Button(self, text="7", command=lambda: enterCode(str(7))).grid(row=0, column=0, sticky=N+S+E+W)
         ttk.Button(self, text="8", command=lambda: enterCode(str(8))).grid(row=0, column=1, sticky=N+S+E+W)
         ttk.Button(self, text="9", command=lambda: enterCode(str(9))).grid(row=0, column=2, sticky=N+S+E+W)
-	ttk.Button(self, text="0", command=lambda: enterCode(str(0))).grid(row=0, column=3, sticky=N+S+E+W)
+	ttk.Button(self, text="Enter", command=lambda: enterCode("enter")).grid(row=0, column=3, sticky=N+S+E+W)
         ttk.Button(self, text="Reset", command=lambda: enterCode("reset")).grid(row=1, column=3, sticky=N+S+E+W)
         MButton =ttk.Button(self, text="Cancel", command=lambda: controller.show_frame(StartPage)).grid(row=2, column=3, sticky=N+S+E+W)
 
@@ -177,7 +177,7 @@ class RocketPage(ttk.Frame):
         for y in range(3):
                 self.rowconfigure(y, weight=1)
         label = ttk.Label(self, text="Rocket Launcher", anchor='center').grid(row=0, column=0, columnspan=3, sticky="NSEW")
-	launchbutton =ttk.Button(self,text="Initiate Launch",command=lambda:controller.show_frame(CodePage)).grid(row=1, column=0, sticky="NSEW")
+	launchbutton =ttk.Button(self,text="Initiate Launch",command=lambda:enterCode("init")).grid(row=1, column=0, sticky="NSEW")
 	azimuthScale =ttk.Scale(self, orient=tk.HORIZONTAL, from_ = 1, to = 100).grid(row=3, column=0, columnspan=2, sticky="NSEW")
 	elevationScale = ttk.Scale(self, orient=tk.VERTICAL, from_ = 1, to = 100).grid(row=1, column=1, rowspan=3, sticky="NSEW")
         Mbutton =ttk.Button(self,text="Main Page",command=lambda:controller.show_frame(StartPage)).grid(row=2, column=0, sticky="NSEW")
@@ -188,13 +188,53 @@ def getColor():
 
 def enterCode(i):
 	global code
-	if i == 'reset':
+        if i == 'reset':
+                code=''
+        elif i == 'enter':
+                if code=="6969":
+                        speak("Launch access, granted")
+                        time.sleep(2)
+                        speak("sighmultaneously, Activate, arming, keys")
+			time.sleep(3)
+			#start checking for arming keys
+			enterCode("keys")
+		else:
+			speak("Launch access, denied")
+			app.show_frame(StartPage)
+        elif i == 'init':
+                speak("Initiating launch procedure")
+                time.sleep(3)
 		code=''
-	else:
-		code+=i
-		print(code)
+                speak("Enter launch code")
+                app.show_frame(CodePage)
+	elif i == 'keys':
+		speak("Arming, keys, activated.")
+		time.sleep(2)
+		speak("Aim tourret and fire when ready")
+		#Activate fire missiles button and check for it"
+		time.sleep(3)
+		enterCode('fire')
+	elif i == 'fire':
+		speak("Firing in")
+		time.sleep(1)
+		speak("5")
+		time.sleep(1)
+		speak("4")
+                time.sleep(1)
+		speak("3")
+                time.sleep(1)
+		speak("2")
+                time.sleep(1)
+		speak("1")
+                time.sleep(1)
+		speak("Fire!")
+		#fire off rocket relay for 1 second.
+        else:
+                code+=i
+                print(code)
+
 def speak(text):
-	subprocess.Popen(["espeak", "-v", "female3", text])
+	subprocess.Popen(["espeak", "-v", "female3", text], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def serialIO():
 	#Setup serial read and write here
