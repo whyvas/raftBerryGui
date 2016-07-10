@@ -16,7 +16,7 @@ class raftBerry(tk.Tk):
 	tk.Tk.__init__(self, *args, **kwargs)
         tk.Tk.wm_title(self, VERSION)
 	#Set window icon
-	img = PhotoImage(file='images/raftBerryPi.gif')
+	img = PhotoImage(file='/home/pi/raftBerryGui/images/raftBerryPi.gif')
 	self.tk.call('wm', 'iconphoto', self._w, img)
 
 	self.rowconfigure(0, weight=1)
@@ -104,7 +104,7 @@ class LogoPage(ttk.Frame):
         self.rowconfigure(0, weight=1)
 	canvas = Canvas(self, width=800, height=480)
 	canvas.create_line(0, 0, 200, 100)
-	logo = ImageTk.PhotoImage(file="images/raftBerryPi.png")
+	logo = ImageTk.PhotoImage(file="/home/pi/raftBerryGui/images/raftBerryPi.png")
 	canvas.create_image(400,240,image=logo)
 	label = Label(image=logo)
 	label.image = logo
@@ -123,8 +123,8 @@ class ExitPage(ttk.Frame):
         label = ttk.Label(self, text="Exit Menu").grid(row=0, column=0, sticky="NSEW", columnspan=2)
         Mbutton =ttk.Button(self,text="Main Page",command=lambda:controller.show_frame(StartPage)).grid(row=1, column=1, sticky="NSEW")
 	Exitbutton =ttk.Button(self,text="Exit Application",command=lambda:exit()).grid(row=2, column=1, sticky="NSEW")
-	Rebootbutton =ttk.Button(self,text="Reboot System",command=lambda:call(["sudo", "reboot"])).grid(row=1, column=0, sticky="NSEW")
-	Shutdownbutton =ttk.Button(self,text="Shutdown System",command=lambda:call(["sudo", "poweroff"])).grid(row=2, column=0, sticky="NSEW")
+	Rebootbutton =ttk.Button(self,text="Reboot System",command=lambda:subprocess.call(["sudo", "reboot"])).grid(row=1, column=0, sticky="NSEW")
+	Shutdownbutton =ttk.Button(self,text="Shutdown System",command=lambda:subprocess.call(["sudo", "poweroff"])).grid(row=2, column=0, sticky="NSEW")
 
 
 class MapPage(ttk.Frame):
