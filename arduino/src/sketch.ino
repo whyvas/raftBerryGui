@@ -1,5 +1,4 @@
 //GPIO connections
-
 #define AUTOMAN 42
 #define PORTDIR 9
 #define PORTLOW 6
@@ -38,9 +37,37 @@ pinMode(JOYDOWN, INPUT_PULLUP);
 pinMode(JOYLEFT, INPUT_PULLUP);
 pinMode(JOYRIGHT, INPUT_PULLUP);
 pinMode(SHUTDOWN, INPUT_PULLUP);
-    
 }
 
+void loop(){
+  if (digitalRead(AUTOMAN)==LOW){
+    motorsOff();
+    Serial.print("raftBerry manual mode");
+    leftspeed = 0;
+    rightspeed = 0;
+    setSpeed();
+    while(digitalRead(AUTOMAN)==LOW){
+      if(digitalRead(SHUTDOWN)==LOW){
+        emergencyStop();
+      }
+      if(digitalRead(JOYUP) ==LOW){
+        joyUp();
+      }
+      if(digitalRead(JOYDOWN) ==LOW){
+        joyDown();
+      }
+      if(digitalRead(JOYLEFT) ==LOW){
+        joyLeft();
+      }
+      if(digitalRead(JOYRIGHT) ==LOW){
+        joyRight();
+      }
+      delay(500);
+    }
+  }
+//Do autopilot check and code here  
+  }
+  
 //Function to turn off all motors
 void motorsOff(){
   digitalWrite(STARHIGH, HIGH);
