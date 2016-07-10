@@ -170,7 +170,7 @@ class RocketPage(ttk.Frame):
 
     def __init__(self, parent, controller):
 	ttk.Frame.__init__(self,parent)
-	#global elev
+	global elev
 	for x in range(2):
                 self.columnconfigure(x, weight=1)
         for y in range(3):
@@ -178,7 +178,7 @@ class RocketPage(ttk.Frame):
         label = ttk.Label(self, text="Rocket Launcher", anchor='center').grid(row=0, column=0, columnspan=3, sticky="NSEW")
 	launchbutton =ttk.Button(self,text="Initiate Launch",command=lambda:enterCode("init")).grid(row=1, column=0, sticky="NSEW")
 	azimuthScale =ttk.Scale(self, orient=tk.HORIZONTAL, from_ = 1, to = 100).grid(row=3, column=0, columnspan=2, sticky="NSEW")
-#	elevationScale = ttk.Scale(self, orient=tk.VERTICAL, from_ = 1, to = 100, variable=elev).grid(row=1, column=1, rowspan=3, sticky="NSEW")
+	elevationScale = ttk.Scale(self, orient=tk.VERTICAL, from_ = 1, to = 100, variable=elev).grid(row=1, column=1, rowspan=3, sticky="NSEW")
         Mbutton =ttk.Button(self,text="Main Page",command=lambda:controller.show_frame(StartPage)).grid(row=2, column=0, sticky="NSEW")
 
 def getColor():
@@ -236,8 +236,8 @@ def speak(text):
 	subprocess.Popen(["espeak", "-v", "female3", text], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def serialIO():
-	global data, outdata
-#	outdata[0]=elev.get()
+	global data, outdata, elev
+	outdata[0]=elev.get()
 	print("Reading and writing from serial port.")
 	print(outdata[0])
 	if ser.inWaiting() > 63: 
@@ -258,10 +258,16 @@ print(ser.name)
 
 app = raftBerry()
 #Make the app fullscreen to maximize touchscreen button size.
+
+code=""
+data = array.array('b',(0 for _ in xrange(64)))
 code=""
 data = array.array('b',(0 for _ in xrange(64)))
 outdata = array.array('b',(0 for _ in xrange(64)))
-#elev = IntVar()
+elev = IntVar()
+outdata = array.array('b',(0 for _ in xrange(64)))
+elev = IntVar()
+
 app.attributes("-fullscreen", True)
 app.config(cursor='none')
 app.after(100, serialIO)

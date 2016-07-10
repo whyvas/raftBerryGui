@@ -1,14 +1,16 @@
 #raftBerryGui code to update the previous version of the raftBerry and add absurd features.
 #
 #Frame manager code derived from youtube user sentdex 
-#Thanks novel_yet_trivial
+#Special thanks to reddit user novel_yet_trivial for helping with grid issues.
 
 from Tkinter import *
 import Tkinter as tk
 from tkColorChooser import askcolor  
-import subprocess, ttk, time, ImageTk, serial, array
+import subprocess, ttk, time, ImageTk
 
 VERSION="raftBerry v0.2"
+
+code=""
 
 class raftBerry(tk.Tk):
 
@@ -107,7 +109,7 @@ class LogoPage(ttk.Frame):
 	logo = ImageTk.PhotoImage(file="images/raftBerryPi.png")
 	canvas.create_image(400,240,image=logo)
 	label = Label(image=logo)
-	label.image = logo
+	label.image = logo # keep a reference!
 	canvas.grid(row=0, column=0, sticky="NSEW")
 
 
@@ -169,16 +171,15 @@ class MultiPage(ttk.Frame):
 class RocketPage(ttk.Frame):
 
     def __init__(self, parent, controller):
-	ttk.Frame.__init__(self,parent)
-	#global elev
+        ttk.Frame.__init__(self,parent)
 	for x in range(2):
                 self.columnconfigure(x, weight=1)
         for y in range(3):
                 self.rowconfigure(y, weight=1)
         label = ttk.Label(self, text="Rocket Launcher", anchor='center').grid(row=0, column=0, columnspan=3, sticky="NSEW")
-	launchbutton =ttk.Button(self,text="Initiate Launch",command=lambda:enterCode("init")).grid(row=1, column=0, sticky="NSEW")
+	launchbutton =ttk.Button(self,text="Initiate Launch",command=lambda:controller.show_frame(CodePage)).grid(row=1, column=0, sticky="NSEW")
 	azimuthScale =ttk.Scale(self, orient=tk.HORIZONTAL, from_ = 1, to = 100).grid(row=3, column=0, columnspan=2, sticky="NSEW")
-#	elevationScale = ttk.Scale(self, orient=tk.VERTICAL, from_ = 1, to = 100, variable=elev).grid(row=1, column=1, rowspan=3, sticky="NSEW")
+	elevationScale = ttk.Scale(self, orient=tk.VERTICAL, from_ = 1, to = 100).grid(row=1, column=1, rowspan=3, sticky="NSEW")
         Mbutton =ttk.Button(self,text="Main Page",command=lambda:controller.show_frame(StartPage)).grid(row=2, column=0, sticky="NSEW")
 
 def getColor():
@@ -187,84 +188,36 @@ def getColor():
 
 def enterCode(i):
 	global code
-        if i == 'reset':
-                code=''
-        elif i == 'enter':
-                if code=="6969":
-                        speak("Launch access, granted")
-                        time.sleep(2)
-                        speak("sighmultaneously, Activate, arming, keys")
-			time.sleep(3)
-			#start checking for arming keys
-			enterCode("keys")
-		else:
-			speak("Launch access, denied")
-			app.show_frame(StartPage)
-        elif i == 'init':
-                speak("Initiating launch procedure")
-                time.sleep(3)
+	if i == 'reset':
 		code=''
-                speak("Enter launch code")
-                app.show_frame(CodePage)
-	elif i == 'keys':
-		speak("Arming, keys, activated.")
-		time.sleep(2)
-		speak("Aim tourret and fire when ready")
-		#Activate fire missiles button and check for it"
-		time.sleep(3)
-		enterCode('fire')
-	elif i == 'fire':
-		speak("Firing in")
+	elif i == 'enter':
+		if code=="6969":
+			speak("Launch Code Accepted")
+			time.sleep(1)
+			speak("simultaneously, Activate arming keys")
+	
+	elif i == 'init':
+		speak("Initiating launch procedure")
 		time.sleep(1)
-		speak("5")
-		time.sleep(1)
-		speak("4")
-                time.sleep(1)
-		speak("3")
-                time.sleep(1)
-		speak("2")
-                time.sleep(1)
-		speak("1")
-                time.sleep(1)
-		speak("Fire!")
-		#fire off rocket relay for 1 second.
-        else:
-                code+=i
-                print(code)
-
+		speak("Enter launch code")
+		controller.show_frame(CodePage)
+	else:
+		code+=i
+		print(code)
 def speak(text):
-	subprocess.Popen(["espeak", "-v", "female3", text], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	subprocess.Popen(["espeak", "-v", "female3", text])
 
 def serialIO():
-	global data, outdata
-#	outdata[0]=elev.get()
+	#Setup serial read and write here
 	print("Reading and writing from serial port.")
-	print(outdata[0])
-	if ser.inWaiting() > 63: 
-		data=ser.read(64)
-	for i in range(4):
-		print(data[i])
-	if (ser.write(outdata)==64):
-		print("Data sent")
-	else:
-		print("Something fucked up")
-	app.after(1000, serialIO) 
-
-
-
-#Setup
-ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0)
-print(ser.name)
+	app.after(100, serialIO) 
 
 app = raftBerry()
-#Make the app fullscreen to maximize touchscreen button size.
-code=""
-data = array.array('b',(0 for _ in xrange(64)))
-outdata = array.array('b',(0 for _ in xrange(64)))
-#elev = IntVar()
+#app.after(100, serialIO)
 app.attributes("-fullscreen", True)
 app.config(cursor='none')
-app.after(100, serialIO)
+
+#open serial connection here
 app.show_frame(LogoPage)
 app.update()
 time.sleep(1)
