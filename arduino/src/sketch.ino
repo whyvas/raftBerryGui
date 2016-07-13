@@ -26,6 +26,7 @@
 //Global Variables
 int leftspeed = 0;
 int rightspeed = 0;
+char receivedChar;
 
 
 void setup() {  
