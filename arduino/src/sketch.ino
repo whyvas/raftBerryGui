@@ -67,8 +67,18 @@ void loop(){
           delay(500);
         }
 }
-Serial.print("Auto Mode\n");
+	
+	if (digitalRead(AUTOMAN)==LOW){
+		Serial.print("Auto Mode\n");
+		while(digitalRead(AUTOMAN)==LOW{
+			if (Serial.available() > 0) {
+				execCmd( Serial.read());
+			}
+		}
+	}
 }
+
+
 //Function to turn off all motors
 void motorsOff(){
   digitalWrite(STARHIGH, HIGH);
@@ -256,6 +266,31 @@ void joyRight(){
   Serial.print(String("Left:") + leftspeed + String("Right:") +rightspeed);
   setSpeed();
 }
+
+void execCmd() {
+	receivedChar = Serial.read();
+
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // CHECK ME              Function that returns the angle remaining to get to desired bearing. Negative for left, positive for right.

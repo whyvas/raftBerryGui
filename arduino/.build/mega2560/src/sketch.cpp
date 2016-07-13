@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 void setup();
+void loop();
 void motorsOff();
 void emergencyStop();
 void setSpeed();
@@ -18,24 +19,23 @@ float haversine(float lat1, float lon1, float lat2, float lon2);
 int bearing(float lat1, float lon1, float lat2, float lon2);
 int findClosest();
 void autoSpeed();
-void loop();
 #line 1 "src/sketch.ino"
 //GPIO connections
 
-#define AUTOMAN 42
-#define PORTDIR 9
-#define PORTLOW 6
-#define PORTMED 7
-#define PORTHIGH 8
-#define STARDIR 13
-#define STARLOW 10
-#define STARMED 11
-#define STARHIGH 12
+#define PORTDIR 8
+#define PORTLOW 9
+#define PORTMED 10
+#define PORTHIGH 7
+#define STARDIR 6
+#define STARLOW 12
+#define STARMED 13
+#define STARHIGH 11
 #define JOYUP 52
-#define JOYDOWN 48
-#define JOYLEFT 46
-#define JOYRIGHT 50
-#define SHUTDOWN 44
+#define JOYDOWN 50
+#define JOYLEFT 48
+#define JOYRIGHT 46
+#define SHUTDOWN 42
+#define AUTOMAN 44
 
 //Global Variables
 int leftspeed = 0;
@@ -60,9 +60,37 @@ pinMode(JOYDOWN, INPUT_PULLUP);
 pinMode(JOYLEFT, INPUT_PULLUP);
 pinMode(JOYRIGHT, INPUT_PULLUP);
 pinMode(SHUTDOWN, INPUT_PULLUP);
-    
 }
 
+void loop(){
+      if (digitalRead(AUTOMAN)==LOW){
+        motorsOff();
+        Serial.print("raftBerry manual mode\n");
+        leftspeed = 0;
+        rightspeed = 0;
+        setSpeed();
+        while(digitalRead(AUTOMAN)==LOW){
+          if(digitalRead(SHUTDOWN)==LOW){
+            emergencyStop();
+            Serial.print("Emerg\n");
+          }
+          if(digitalRead(JOYUP) ==LOW){
+            joyUp();
+          }
+          if(digitalRead(JOYDOWN) ==LOW){
+            joyDown();
+          }
+          if(digitalRead(JOYLEFT) ==LOW){
+            joyLeft();
+          }
+          if(digitalRead(JOYRIGHT) ==LOW){
+            joyRight();
+          }
+          delay(500);
+        }
+}
+Serial.print("Auto Mode\n");
+}
 //Function to turn off all motors
 void motorsOff(){
   digitalWrite(STARHIGH, HIGH);
@@ -78,7 +106,7 @@ void motorsOff(){
 
 //Turn off motors, cleanup GPIO and shutdown.
 void emergencyStop(){
-  Serial.print("Emergency stop button pressed");
+  Serial.print("Emergency stop button pressed\n");
   leftspeed=0;
   rightspeed=0;
   motorsOff();
@@ -90,99 +118,99 @@ void setSpeed(){
     digitalWrite(STARHIGH,LOW);
     digitalWrite(STARMED,LOW);
     digitalWrite(STARLOW,LOW);
-    digitalWrite(STARDIR,LOW);
-    Serial.print(String("Set Right:") + rightspeed);
+    digitalWrite(STARDIR,HIGH);
+    Serial.print(String("\nSet Right:") + rightspeed);
   }
   else if (rightspeed==2){
     digitalWrite(STARHIGH,HIGH);
     digitalWrite(STARMED,LOW);
     digitalWrite(STARLOW,LOW);
-    digitalWrite(STARDIR,LOW);
-    Serial.print(String("Set Right:") +rightspeed);
+    digitalWrite(STARDIR,HIGH);
+    Serial.print(String("\nSet Right:") +rightspeed);
   }
   else if (rightspeed==1){
     digitalWrite(STARHIGH,HIGH);
     digitalWrite(STARMED,HIGH);
     digitalWrite(STARLOW,LOW);
-    digitalWrite(STARDIR,LOW);
-    Serial.print(String("Set Right:") +rightspeed);
+    digitalWrite(STARDIR,HIGH);
+    Serial.print(String("\nSet Right:") +rightspeed);
   }
   else if (rightspeed==0){
     digitalWrite(STARHIGH,HIGH);
     digitalWrite(STARMED,HIGH);
     digitalWrite(STARLOW,HIGH);
     digitalWrite(STARDIR,HIGH);
-    Serial.print(String("Set Right:") +rightspeed);
+    Serial.print(String("\nSet Right:") +rightspeed);
   }
   else if (rightspeed==-1){
-    digitalWrite(STARHIGH,1);
-    digitalWrite(STARMED,1);
+    digitalWrite(STARHIGH,HIGH);
+    digitalWrite(STARMED,HIGH);
     digitalWrite(STARLOW,LOW);
-    digitalWrite(STARDIR,1);
-    Serial.print(String("Set Right:") + rightspeed);
+    digitalWrite(STARDIR,LOW);
+    Serial.print(String("\nSet Right:") + rightspeed);
   }
   else if (rightspeed==-2){
     digitalWrite(STARHIGH,HIGH);
     digitalWrite(STARMED,LOW);
     digitalWrite(STARLOW,LOW);
-    digitalWrite(STARDIR,HIGH);
-    Serial.print(String("Set Right:")+ rightspeed);
+    digitalWrite(STARDIR,LOW);
+    Serial.print(String("\nSet Right:")+ rightspeed);
   }
   else if (rightspeed==-3){
     digitalWrite(STARHIGH,LOW);
     digitalWrite(STARMED,LOW);
     digitalWrite(STARLOW,LOW);
-    digitalWrite(STARDIR,HIGH);
-    Serial.print(String("Set Right:") + rightspeed);
+    digitalWrite(STARDIR,LOW);
+    Serial.print(String("\nSet Right:") + rightspeed);
   }
   if (leftspeed==3){
     digitalWrite(PORTHIGH,LOW);
     digitalWrite(PORTMED,LOW);
     digitalWrite(PORTLOW,LOW);
-    digitalWrite(PORTDIR,LOW);
-    Serial.print(String("Set Left:") +leftspeed);
+    digitalWrite(PORTDIR,HIGH);
+    Serial.print(String("\nSet Left:") +leftspeed);
   }
 else if (leftspeed==2){
     digitalWrite(PORTHIGH,HIGH);
     digitalWrite(PORTMED,LOW);
     digitalWrite(PORTLOW,LOW);
-    digitalWrite(PORTDIR,LOW);
-    Serial.print(String("Set Left:") +leftspeed);
+    digitalWrite(PORTDIR,HIGH);
+    Serial.print(String("\nSet Left:") +leftspeed);
 }
 else if (leftspeed==1){
     digitalWrite(PORTHIGH,HIGH);
     digitalWrite(PORTMED,HIGH);
     digitalWrite(PORTLOW,LOW);
-    digitalWrite(PORTDIR,LOW);
-    Serial.print(String("Set Left:") +leftspeed);
+    digitalWrite(PORTDIR,HIGH);
+    Serial.print(String("\nSet Left:") +leftspeed);
 }
 else if (leftspeed==0){
     digitalWrite(PORTHIGH,HIGH);
     digitalWrite(PORTMED,HIGH);
     digitalWrite(PORTLOW,HIGH);
-    digitalWrite(PORTDIR,HIGH);
-    Serial.print(String("Set Left:") +leftspeed);
+    digitalWrite(PORTDIR,LOW);
+    Serial.print(String("\nSet Left:") +leftspeed);
 }
   else if (leftspeed==-1){
     digitalWrite(PORTHIGH,HIGH);
     digitalWrite(PORTMED,HIGH);
     digitalWrite(PORTLOW,LOW);
-    digitalWrite(PORTDIR,HIGH);
-    Serial.print(String("Set Left:") +leftspeed);
+    digitalWrite(PORTDIR,LOW);
+    Serial.print(String("\nSet Left:") +leftspeed);
   }
   else if (leftspeed==-2){
     digitalWrite(PORTHIGH,HIGH);
     digitalWrite(PORTMED,LOW);
     digitalWrite(PORTLOW,LOW);
-    digitalWrite(PORTDIR,HIGH);
-    Serial.print(String("Set Left:") +leftspeed);
+    digitalWrite(PORTDIR,LOW);
+    Serial.print(String("\nSet Left:") +leftspeed);
   }
   else if (leftspeed==-3){
     digitalWrite(PORTHIGH,LOW);
     digitalWrite(PORTMED,LOW);
     digitalWrite(PORTLOW,LOW);
-    digitalWrite(PORTDIR,HIGH);
-    Serial.print(String("Set Left:") +leftspeed);
+    digitalWrite(PORTDIR,LOW);
+    Serial.print(String("\nSet Left:") +leftspeed);
   }
 }
 
@@ -217,7 +245,7 @@ void decRight(){
 
 //Read joystick inputs  
 void joyUp(){
-  Serial.print("Joystick up");
+  Serial.print("\nJoystick up");
   if (leftspeed < 3){
     leftspeed+=1;
   }
@@ -228,7 +256,7 @@ void joyUp(){
   setSpeed();
 }
 void joyDown(){
-  Serial.print("Joystick down");
+  Serial.print("\nJoystick down");
   if (leftspeed > -3){
     leftspeed-=1;
   }
@@ -239,13 +267,13 @@ void joyDown(){
   setSpeed();
   }
 void joyLeft(){
-  Serial.print("Joystick left");
+  Serial.print("\nJoystick left");
   incRight();
   Serial.print(String("Left:") + leftspeed + String("Right:") +rightspeed);
   setSpeed();
 }
 void joyRight(){
-  Serial.print("Joystick right");
+  Serial.print("\nJoystick right");
   incLeft();
   Serial.print(String("Left:") + leftspeed + String("Right:") +rightspeed);
   setSpeed();
@@ -315,43 +343,5 @@ void autoSpeed(){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-void loop(){
-      if (digitalRead(AUTOMAN)==LOW){
-        motorsOff();
-        Serial.print("raftBerry manual mode");
-        leftspeed = 0;
-        rightspeed = 0;
-        setSpeed();
-        while(digitalRead(AUTOMAN)==LOW){
-          if(digitalRead(SHUTDOWN)==LOW){
-            emergencyStop();
-          }
-          if(digitalRead(JOYUP) ==LOW){
-            joyUp();
-          }
-          if(digitalRead(JOYDOWN) ==LOW){
-            joyDown();
-          }
-          if(digitalRead(JOYLEFT) ==LOW){
-            joyLeft();
-          }
-          if(digitalRead(JOYRIGHT) ==LOW){
-            joyRight();
-          }
-          delay(500);
-        }
-}
-}
 
 

@@ -43,7 +43,7 @@ p21
 tp22
 a(S'build_dir'
 p23
-S'.build/uno'
+S'.build/mega2560'
 p24
 tp25
 a(S'avrdude'
