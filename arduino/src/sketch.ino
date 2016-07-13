@@ -22,18 +22,25 @@
 #define JOYRIGHT 46
 #define SHUTDOWN 42
 #define AUTOMAN 44
+#define MISSILERELAY 40
+#define ARMKEYS 38
+#define LAUNCHMISSILE 36
 
 //Global Variables
 int leftspeed = 0;
 int rightspeed = 0;
 char receivedChar;
-
+bool armKeysState = FALSE;
+bool launchButtonState = FALSE;
 
 void setup() {  
   Serial.begin(115200);
 
 //Setup pins    
 pinMode(AUTOMAN, INPUT_PULLUP);
+pinMode(ARMKEYS, INPUT_PULLUP);
+pinMode(LAUNCHMISSILE, INPUT_PULLUP);
+pinMode(MISSILERELAY, OUTPUT);
 pinMode(PORTDIR, OUTPUT);
 pinMode(PORTLOW, OUTPUT);
 pinMode(PORTMED, OUTPUT);
@@ -47,10 +54,13 @@ pinMode(JOYDOWN, INPUT_PULLUP);
 pinMode(JOYLEFT, INPUT_PULLUP);
 pinMode(JOYRIGHT, INPUT_PULLUP);
 pinMode(SHUTDOWN, INPUT_PULLUP);
+
+//Turn off missile relay
+digitalWrite(MISSILERELAY,HIGH);
 }
 
-//Main program loop, if manual mode is selected, scan user controls and control relays accordingly, otherwise go
-//into automatic mode and await navigation input from the pi via serial characters.
+//Main program loop, if manual mode is selected, scan user inputs and control relays accordingly, otherwise go
+//into automatic mode and await navigation input from the pi via serial.
 void loop(){
       if (digitalRead(AUTOMAN)==LOW){
         motorsOff();
@@ -105,7 +115,7 @@ void motorsOff(){
 
 //Turn off motors, cleanup GPIO and shutdown.
 void emergencyStop(){
-  Serial.print("Emergency stop button pressed\n");
+  //Serial.print("Emergency stop button pressed\n");
   leftspeed=0;
   rightspeed=0;
   motorsOff();
@@ -277,6 +287,7 @@ void joyRight(){
 }
 
 //The following function reads single characters from the serial port and reacts accoding to the following table:
+//INPUTS
 //A = set PORT to high forward
 //B = set PORT to medium forward
 //C = set PORT to low forward
@@ -291,7 +302,13 @@ void joyRight(){
 //L = set STAR to low reverse
 //M = set STAR to medium reverse
 //N = set STAR to high reverse
-//O = Fire missile launcher
+//O = launch missiles
+
+//OUTPUTS
+//P = Arm keys enabled
+//Q = Arm keys disabled
+//R = Launch Missile enabled
+//S = Launch Missile disabled
 
 void execCmd() {
 	if (Serial.available() > 0) {
@@ -359,6 +376,27 @@ void execCmd() {
 				setSpeed();
 			}	
 		}
-		//Do checks for raspberry pi input that don't control motors. (Missile launcher)
+		if (receivedChar=='Q' && (digitalRead(ARMKEYS)==LOW) && (digitalRead(LAUNCHMISSILE)==LOW)){
+			digitalWrite(MISSILERELAY,LOW);	
+		}	
+		
+	}
+	//Check arm key switch status
+	if (armKeysState == digitalRead(ARMKEYS == LOW)){
+		armKeyState = !(armKeyState);
+		Serial.write('O');
+	}
+	else if (armKeysState == digitalRead(ARMKEYS == HIGH)){
+		armKeyState = !(armKeyState);
+		Serial.write('P');
+	}
+	//Check Launch Missile Button Status
+	if (launchMissile == digitalRead(LAUNCHMISSILE == LOW)){
+		launchButtonState = !(launchButtonState);
+		Serial.write('R');
+	}
+	else if (armKeysState == digitalRead(ARMKEYS == HIGH)){
+		launchButtonState = !(launchButtonState);
+		Serial.write('S');
 	}
 }
