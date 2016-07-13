@@ -299,11 +299,66 @@ void execCmd() {
 		//Check if in manual mode before doing motor adjustments.
 		if (digitalRead(AUTOMAN)==HIGH){
 			if (receivedChar=='A'){
-			leftspeed=3;
-			setSpeed();
+				leftspeed=3;
+				setSpeed();
 			}
-		
-			
+			if (receivedChar=='A'){
+				leftspeed=3;
+				setSpeed();
+			}
+			if (receivedChar=='B'){
+				leftspeed=2;
+				setSpeed();
+			}
+			if (receivedChar=='C'){
+				leftspeed=1;
+				setSpeed();
+			}	
+			if (receivedChar=='D'){
+				leftspeed=0;
+				setSpeed();
+			}	
+			if (receivedChar=='E'){
+				leftspeed=-1;
+				setSpeed();
+			}	
+			if (receivedChar=='F'){
+				leftspeed=-2;
+				setSpeed();
+			}	
+			if (receivedChar=='G'){
+				leftspeed=-3;
+				setSpeed();
+			}	
+			if (receivedChar=='H'){
+				rightspeed=3;
+				setSpeed();
+			}	
+			if (receivedChar=='I'){
+				rightspeed=2;
+				setSpeed();
+			}	
+			if (receivedChar=='J'){
+				rightspeed=1;
+				setSpeed();
+			}	
+			if (receivedChar=='K'){
+				rightspeed=0;
+				setSpeed();
+			}	
+			if (receivedChar=='L'){
+				rightspeed=-1;
+				setSpeed();
+			}	
+			if (receivedChar=='M'){
+				rightspeed=-2;
+				setSpeed();
+			}	
+			if (receivedChar=='N'){
+				rightspeed=-3;
+				setSpeed();
+			}	
 		}
+		//Do checks for raspberry pi input that don't control motors. (Missile launcher)
 	}
 }
