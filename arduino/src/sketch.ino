@@ -82,7 +82,7 @@ void loop(){
 	
 	if (digitalRead(AUTOMAN)==HIGH){
 		Serial.print("Auto Mode\n");
-		while(digitalRead(AUTOMAN)==HIGH{
+		while(digitalRead(AUTOMAN)==HIGH){
 				execCmd();
 			}
 	}
@@ -298,7 +298,7 @@ void execCmd() {
 		receivedChar = Serial.read();
 		//Check if in manual mode before doing motor adjustments.
 		if (digitalRead(AUTOMAN)==HIGH){
-			if (receivedChar=="A"){
+			if (receivedChar=='A'){
 			leftspeed=3;
 			setSpeed();
 			}
