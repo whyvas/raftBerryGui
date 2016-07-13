@@ -201,18 +201,19 @@ def enterCode(i):
 			speak("Launch access, denied")
 			app.show_frame(StartPage)
         elif i == 'init':
+                
                 speak("Initiating launch procedure")
                 time.sleep(3)
 		code=''
+		
                 speak("Enter launch code")
                 app.show_frame(CodePage)
 	elif i == 'keys':
 		speak("Arming, keys, activated.")
 		time.sleep(2)
 		speak("Aim tourret and fire when ready")
-		#Activate fire missiles button and check for it"
-		time.sleep(3)
-		enterCode('fire')
+		
+		
 	elif i == 'fire':
 		speak("Firing in")
 		time.sleep(1)
@@ -227,7 +228,7 @@ def enterCode(i):
 		speak("1")
                 time.sleep(1)
 		speak("Fire!")
-		#fire off rocket relay for 1 second.
+		serialIO('Q');
         else:
                 code+=i
                 print(code)
@@ -235,17 +236,12 @@ def enterCode(i):
 def speak(text):
 	subprocess.Popen(["espeak", "-v", "female3", text], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-def serialIO():
-	global data, outdata
-#	outdata[0]=elev.get()
-	print("Reading and writing from serial port.")
-	print(outdata[0])
-	if ser.inWaiting() > 63: 
-		data=ser.read(64)
-	for i in range(4):
-		print(data[i])
-	if (ser.write(outdata)==64):
-		print("Data sent")
+def serialIO(outCmd):
+	if ser.inWaiting() > 0: 
+		inCmd=ser.read()
+		if inCmd=='O':
+			
+	
 	else:
 		print("Something fucked up")
 	app.after(1000, serialIO) 
@@ -259,9 +255,6 @@ print(ser.name)
 app = raftBerry()
 #Make the app fullscreen to maximize touchscreen button size.
 code=""
-data = array.array('b',(0 for _ in xrange(64)))
-outdata = array.array('b',(0 for _ in xrange(64)))
-#elev = IntVar()
 app.attributes("-fullscreen", True)
 app.config(cursor='none')
 app.after(100, serialIO)
