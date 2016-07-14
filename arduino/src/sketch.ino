@@ -384,18 +384,22 @@ void execCmd() {
 	if ((armKeysState == 0) && (digitalRead(ARMKEYS)==LOW)){
 		armKeysState = 1;
 		Serial.write('P');
+		delay(100);
 	}
 	if ((armKeysState == 1) && (digitalRead(ARMKEYS) == HIGH)){
 		armKeysState = 0;
 		Serial.write('Q');
+		delay(100);
 	}
 	//Check Launch Missile Button Status
 	if ((launchButtonState == 0) && (digitalRead(LAUNCHMISSILE) == LOW)){
 		launchButtonState = 1;
 		Serial.write('R');
+		delay(100);
 	}
 	if ((launchButtonState == 1) && (digitalRead(LAUNCHMISSILE) == HIGH)){
 		launchButtonState = 0;
 		Serial.write('S');
+		delay(100);
 	}
 }
