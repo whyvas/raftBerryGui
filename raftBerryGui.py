@@ -244,7 +244,7 @@ def serialIO(outCmd):
 			
 	else:
 		print("Received input: "+str(outCmd))
-	app.after(1000, serialIO('0')) 
+	app.after(10000, serialIO('0')) 
 
 
 
