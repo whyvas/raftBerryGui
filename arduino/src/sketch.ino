@@ -313,6 +313,7 @@ void joyRight(){
 void execCmd() {
 	if (Serial.available() > 0) {
 		receivedChar = Serial.read();
+		Serial.write(receivedChar);
 		//Check if in manual mode before doing motor adjustments.
 		if (digitalRead(AUTOMAN)==HIGH){
 			if (receivedChar=='A'){
