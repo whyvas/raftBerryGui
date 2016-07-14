@@ -241,6 +241,10 @@ def enterCode(i):
 	                time.sleep(1)
 			speak("Fire!")
 			serialIO('Q');
+			code=""
+			launchInit=0
+			accessCode=0
+			app.show_frame(StartPage)
         else:
                 code+=i
                 print(code)
