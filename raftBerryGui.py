@@ -243,8 +243,8 @@ def serialIO(outCmd):
 		#if inCmd=='O':
 			
 	else:
-		print("Something fucked up")
-		app.after(100000, serialIO('0')) 
+		print("Received input: "+str(outCmd))
+	app.after(1000, serialIO('0')) 
 
 
 
