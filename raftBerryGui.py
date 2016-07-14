@@ -209,7 +209,8 @@ def enterCode(i):
                 if (armKeysActivated == 1):
                 	speak("Error, launch keys, activated")
                 	launchInit=0
-                elif (launchButtonActivated == 1):
+                	time.sleep(3)
+                if (launchButtonActivated == 1):
                 	speak("Error, Launch button, activated")
                 	launchInit=0
                 else:
