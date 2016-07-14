@@ -394,7 +394,7 @@ void execCmd() {
 		launchButtonState = 1;
 		Serial.write('R');
 	}
-	if ((launchButtonState == 1) && (digitalRead(ARMKEYS) == HIGH)){
+	if ((launchButtonState == 1) && (digitalRead(LAUNCHMISSILE) == HIGH)){
 		launchButtonState = 0;
 		Serial.write('S');
 	}
