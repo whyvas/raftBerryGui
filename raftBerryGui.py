@@ -239,9 +239,8 @@ def speak(text):
 def serialIO(outCmd):
 	if ser.inWaiting() > 0: 
 		inCmd=ser.read()
-		if inCmd=='O':
+		#if inCmd=='O':
 			
-	
 	else:
 		print("Something fucked up")
 	app.after(1000, serialIO) 
