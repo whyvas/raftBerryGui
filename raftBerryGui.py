@@ -207,7 +207,7 @@ def enterCode(i):
 			app.show_frame(StartPage)
         elif i == 'init':
                 if (armKeysActivated == 1):
-                	speak("Error, launch keys, activated")
+                	speak("Error, arming keys, activated")
                 	launchInit=0
                 	time.sleep(3)
                 if (launchButtonActivated == 1):
