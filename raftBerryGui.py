@@ -244,7 +244,7 @@ def serialIO(outCmd):
 			
 	else:
 		print("Something fucked up")
-		#app.after(1000, serialIO('0')) 
+		app.after(100000, serialIO('0')) 
 
 
 
