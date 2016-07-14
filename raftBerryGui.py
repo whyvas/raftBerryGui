@@ -187,7 +187,10 @@ def getColor():
 	print color
 
 def enterCode(i):
-	#global code
+	global code
+	global launchInit
+	global accessCode
+	
         if i == 'reset':
                 code=''
         elif i == 'enter':
