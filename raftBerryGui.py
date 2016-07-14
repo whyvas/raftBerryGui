@@ -241,7 +241,7 @@ def serialIO(outCmd):
 		inCmd=ser.read()
 		print("Received command: "+ str(inCmd))
 		if inCmd=='O':
-	else if (outCmd!='0'):
+	elif (outCmd!='0'):
 		print("Sending out command: "+str(outCmd))
 		ser.write(outCmd))
 	app.after(100, lambda: serialIO('0'))
