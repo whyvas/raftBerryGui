@@ -7,6 +7,7 @@ from Tkinter import *
 import Tkinter as tk
 from tkColorChooser import askcolor  
 import subprocess, ttk, time, ImageTk, serial, array
+from serial import SerialException
 
 VERSION="raftBerry v0.2"
 
