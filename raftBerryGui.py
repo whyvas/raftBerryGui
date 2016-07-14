@@ -203,12 +203,17 @@ def enterCode(i):
 			app.show_frame(StartPage)
         elif i == 'init':
                 
-                speak("Initiating launch procedure")
-                time.sleep(3)
-		code=''
-		
-                speak("Enter launch code")
-                app.show_frame(CodePage)
+                
+                if (armKeysActivated == 1):
+                	speak("Error, launch keys active")
+                elif (launchButtonActivated == 1):
+                	speak("Error, Launch button, activated")
+                else:
+                	speak("Initiating launch procedure")
+                	time.sleep(3)
+			code=''
+		       	speak("Enter launch code")
+                	app.show_frame(CodePage)
 	elif i == 'keys':
 		speak("Arming, keys, activated.")
 		time.sleep(2)
