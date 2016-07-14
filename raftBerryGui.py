@@ -237,6 +237,7 @@ def speak(text):
 	subprocess.Popen(["espeak", "-v", "female3", text], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def serialIO(outCmd):
+	print("Sending Y");
 	ser.write('Y');
 	if ser.inWaiting() > 0: 
 		inCmd=ser.read()
@@ -248,7 +249,11 @@ def serialIO(outCmd):
 	app.after(100, lambda: serialIO('0'))
 	
 #Setup
-ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0)
+try:
+	ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0)
+except Exception as ex:
+    print("Exception is: " + ex.__getitem__() + " " + ex.__str__())
+
 print(ser.name)
 
 app = raftBerry()
