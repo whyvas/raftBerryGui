@@ -226,7 +226,7 @@ def enterCode(i):
 			speak("Aim tourret and fire when ready")
 	
 	elif i == 'fire':
-		if ((launchInit == accessCode) == (armKeysActivated == launchButtonActivated)):
+		if ((launchInit==1) && (accessCode==1) && (armKeysActivated==1) && (launchButtonActivated==1)):
 			speak("Firing in")
 			time.sleep(1)
 			speak("5")
