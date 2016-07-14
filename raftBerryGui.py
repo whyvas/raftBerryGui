@@ -241,12 +241,9 @@ def serialIO():
 		inCmd=ser.read()
 		print(inCmd)
 		#if inCmd=='O':
-			
 	else:
-		print("Received input: "+str(outCmd))
+		print("Sending output")
 	app.after(1000, serialIO()) 
-
-
 
 #Setup
 ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0)
