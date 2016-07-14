@@ -238,10 +238,27 @@ def speak(text):
 	subprocess.Popen(["espeak", "-v", "female3", text], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def serialIO(outCmd):
+	global armKeysActivated;
+	global launchButtonActivated;
+	
+	//Add trys to this
 	if ser.inWaiting() > 0: 
 		inCmd=ser.read()
 		print("Received command: "+ str(inCmd))
-		#if inCmd=='O':
+		if inCmd=='P':
+			print("Keys Armed")
+			armKeysActivated = 1
+		if inCmd=='Q':
+			print("Keys Deactivated")
+			armKeysActivated = 0
+		if inCmd=='R':
+			print("Launch Button Activated")
+			launchButtonActivated = 1
+		if inCmd=='S':
+			print("Launch Button Deactivated")
+			launchButtonActivated = 0
+		
+		
 	elif (outCmd!='0'):
 		print("Sending out command: "+str(outCmd))
 		ser.write(outCmd)
@@ -258,6 +275,10 @@ print(ser.name)
 app = raftBerry()
 #Make the app fullscreen to maximize touchscreen button size.
 code=""
+armKeysActivated = 0;
+launchButtonActivated = 0;
+
+
 app.attributes("-fullscreen", True)
 app.config(cursor='none')
 app.after(500, serialIO('0'))
