@@ -312,8 +312,6 @@ void joyRight(){
 
 void execCmd() {
 	if (Serial.available() > 0) {
-		receivedChar = Serial.read();
-		Serial.write(receivedChar);
 		//Check if in manual mode before doing motor adjustments.
 		if (digitalRead(AUTOMAN)==HIGH){
 			if (receivedChar=='A'){
@@ -392,12 +390,12 @@ void execCmd() {
 		Serial.write('Q');
 	}
 	//Check Launch Missile Button Status
-	if (launchButtonState == digitalRead(LAUNCHMISSILE) == LOW){
-		launchButtonState = !(launchButtonState);
+	if ((launchButtonState == 0) && ((digitalRead(LAUNCHMISSILE) == LOW)){
+		launchButtonState = 1;
 		Serial.write('R');
 	}
-	else if (launchButtonState == digitalRead(ARMKEYS) == HIGH){
-		launchButtonState = !(launchButtonState);
+	if ((launchButtonState == 1) && (digitalRead(ARMKEYS) == HIGH)){
+		launchButtonState = 0;
 		Serial.write('S');
 	}
 }
