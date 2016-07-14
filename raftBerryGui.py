@@ -239,10 +239,11 @@ def speak(text):
 def serialIO(outCmd):
 	if ser.inWaiting() > 0: 
 		inCmd=ser.read()
-		print(inCmd)
-		#if inCmd=='O':
-	else:
-		print("Sending output: "+str(outCmd))
+		print("Received command: "+ str(inCmd))
+		if inCmd=='O':
+	else if (outCmd!='0'):
+		print("Sending out command: "+str(outCmd))
+		ser.write(outCmd))
 	app.after(100, lambda: serialIO('0'))
 	
 #Setup
