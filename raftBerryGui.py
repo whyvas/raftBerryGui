@@ -241,7 +241,7 @@ def serialIO(outCmd):
 	global armKeysActivated;
 	global launchButtonActivated;
 	
-	//Add trys to this
+	#Add trys to this
 	if ser.inWaiting() > 0: 
 		inCmd=ser.read()
 		print("Received command: "+ str(inCmd))
