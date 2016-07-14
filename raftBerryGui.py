@@ -217,7 +217,7 @@ def enterCode(i):
 			speak("Enter launch code")
                 	app.show_frame(CodePage)
 	elif i == 'keys':
-		if ((launchInit == accessCode) == armKeysActivated)):
+		if ((launchInit == accessCode) == armKeysActivated):
 			speak("Arming, keys, activated.")
 			time.sleep(2)
 			speak("Aim tourret and fire when ready")
