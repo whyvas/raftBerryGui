@@ -187,54 +187,57 @@ def getColor():
 	print color
 
 def enterCode(i):
-	global code
+	#global code
         if i == 'reset':
                 code=''
         elif i == 'enter':
                 if code=="6969":
+                	accessCode=1;
                         speak("Launch access, granted")
                         time.sleep(2)
                         speak("sighmultaneously, Activate, arming, keys")
 			time.sleep(3)
-			#start checking for arming keys
-			enterCode("keys")
+			
 		else:
 			speak("Launch access, denied")
+			accessCode=0;
 			app.show_frame(StartPage)
         elif i == 'init':
-                
-                
                 if (armKeysActivated == 1):
-                	speak("Error, launch keys active")
+                	speak("Error, launch keys, activated")
+                	launchInit=0
                 elif (launchButtonActivated == 1):
                 	speak("Error, Launch button, activated")
+                	launchInit=0
                 else:
                 	speak("Initiating launch procedure")
                 	time.sleep(3)
 			code=''
-		       	speak("Enter launch code")
+			launchInit=1
+			speak("Enter launch code")
                 	app.show_frame(CodePage)
 	elif i == 'keys':
-		speak("Arming, keys, activated.")
-		time.sleep(2)
-		speak("Aim tourret and fire when ready")
-		
-		
+		if (launchInit && accessCode && armKeysActivated):
+			speak("Arming, keys, activated.")
+			time.sleep(2)
+			speak("Aim tourret and fire when ready")
+	
 	elif i == 'fire':
-		speak("Firing in")
-		time.sleep(1)
-		speak("5")
-		time.sleep(1)
-		speak("4")
-                time.sleep(1)
-		speak("3")
-                time.sleep(1)
-		speak("2")
-                time.sleep(1)
-		speak("1")
-                time.sleep(1)
-		speak("Fire!")
-		serialIO('Q');
+		if (launchInit && accessCode && armKeysActivated && launchButtonActivated):
+			speak("Firing in")
+			time.sleep(1)
+			speak("5")
+			time.sleep(1)
+			speak("4")
+	                time.sleep(1)
+			speak("3")
+	                time.sleep(1)
+			speak("2")
+	                time.sleep(1)
+			speak("1")
+	                time.sleep(1)
+			speak("Fire!")
+			serialIO('Q');
         else:
                 code+=i
                 print(code)
@@ -245,6 +248,8 @@ def speak(text):
 def serialIO(outCmd):
 	global armKeysActivated;
 	global launchButtonActivated;
+	global launchInit;
+	global accessCode;
 	
 	#Add trys to this
 	if ser.inWaiting() > 0: 
@@ -253,12 +258,14 @@ def serialIO(outCmd):
 		if inCmd=='P':
 			print("Keys Armed")
 			armKeysActivated = 1
+			enterCode("keys")
 		if inCmd=='Q':
 			print("Keys Deactivated")
 			armKeysActivated = 0
 		if inCmd=='R':
 			print("Launch Button Activated")
 			launchButtonActivated = 1
+			enterCode("fire")
 		if inCmd=='S':
 			print("Launch Button Deactivated")
 			launchButtonActivated = 0
@@ -282,7 +289,8 @@ app = raftBerry()
 code=""
 armKeysActivated = 0;
 launchButtonActivated = 0;
-
+launchInit=0;
+accessCode=0;
 
 app.attributes("-fullscreen", True)
 app.config(cursor='none')
