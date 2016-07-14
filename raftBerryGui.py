@@ -243,7 +243,7 @@ def serialIO(outCmd):
 		#if inCmd=='O':
 	elif (outCmd!='0'):
 		print("Sending out command: "+str(outCmd))
-		ser.write(outCmd))
+		ser.write(outCmd)
 	app.after(100, lambda: serialIO('0'))
 	
 #Setup
