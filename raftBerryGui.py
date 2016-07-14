@@ -239,6 +239,7 @@ def speak(text):
 def serialIO(outCmd):
 	if ser.inWaiting() > 0: 
 		inCmd=ser.read()
+		print(inCmd)
 		#if inCmd=='O':
 			
 	else:
