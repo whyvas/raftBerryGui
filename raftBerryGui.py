@@ -249,9 +249,9 @@ def serialIO(outCmd):
 #Setup
 try:
 	ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0)
-except Exception as ex:
-    print("Exception is: " + ex.__getitem__() + " " + ex.__str__())
-
+except SerialException:
+    print 'port already open'
+    
 print(ser.name)
 
 app = raftBerry()
@@ -259,7 +259,7 @@ app = raftBerry()
 code=""
 app.attributes("-fullscreen", True)
 app.config(cursor='none')
-app.after(1000, serialIO('0'))
+app.after(500, serialIO('0'))
 app.show_frame(LogoPage)
 app.update()
 time.sleep(1)
