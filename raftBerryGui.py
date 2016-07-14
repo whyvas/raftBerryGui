@@ -243,7 +243,7 @@ def serialIO(outCmd):
 			
 	else:
 		print("Something fucked up")
-	app.after(1000, serialIO) 
+	app.after(1000, serialIO('0')) 
 
 
 
@@ -256,7 +256,7 @@ app = raftBerry()
 code=""
 app.attributes("-fullscreen", True)
 app.config(cursor='none')
-app.after(100, serialIO)
+app.after(100, serialIO('0'))
 app.show_frame(LogoPage)
 app.update()
 time.sleep(1)
