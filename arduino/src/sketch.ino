@@ -383,12 +383,12 @@ void execCmd() {
 		
 	}
 	//Check arm key switch status
-	if (armKeysState == digitalRead(ARMKEYS) == LOW){
-		armKeysState = !(armKeysState);
+	if ((armKeysState == 0) && (digitalRead(ARMKEYS)==LOW)){
+		armKeysState = 1;
 		Serial.write('P');
 	}
-	else if (armKeysState == digitalRead(ARMKEYS) == HIGH){
-		armKeysState = !(armKeysState);
+	if ((armKeysState == 1) && (digitalRead(ARMKEYS) == HIGH)){
+		armKeysState = 0;
 		Serial.write('Q');
 	}
 	//Check Launch Missile Button Status
