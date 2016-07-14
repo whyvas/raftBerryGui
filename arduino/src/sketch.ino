@@ -30,8 +30,8 @@
 int leftspeed = 0;
 int rightspeed = 0;
 char receivedChar;
-bool armKeysState = FALSE;
-bool launchButtonState = FALSE;
+bool armKeysState = 0;
+bool launchButtonState = 0;
 
 void setup() {  
   Serial.begin(115200);
