@@ -390,7 +390,7 @@ void execCmd() {
 		Serial.write('Q');
 	}
 	//Check Launch Missile Button Status
-	if ((launchButtonState == 0) && ((digitalRead(LAUNCHMISSILE) == LOW)){
+	if ((launchButtonState == 0) && (digitalRead(LAUNCHMISSILE) == LOW)){
 		launchButtonState = 1;
 		Serial.write('R');
 	}
