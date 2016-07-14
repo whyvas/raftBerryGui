@@ -228,7 +228,7 @@ def enterCode(i):
 		speak("1")
                 time.sleep(1)
 		speak("Fire!")
-		serialIO();
+		serialIO('Q');
         else:
                 code+=i
                 print(code)
@@ -236,15 +236,15 @@ def enterCode(i):
 def speak(text):
 	subprocess.Popen(["espeak", "-v", "female3", text], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-def serialIO():
+def serialIO(outCmd):
 	if ser.inWaiting() > 0: 
 		inCmd=ser.read()
 		print(inCmd)
 		#if inCmd=='O':
 	else:
-		print("Sending output")
-	app.after(1000, serialIO()) 
-
+		print("Sending output: "+str(outCmd))
+	app.after(100, lambda: serialIO('0'))
+	
 #Setup
 ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0)
 print(ser.name)
@@ -254,7 +254,7 @@ app = raftBerry()
 code=""
 app.attributes("-fullscreen", True)
 app.config(cursor='none')
-app.after(1000, serialIO())
+app.after(1000, serialIO('0'))
 app.show_frame(LogoPage)
 app.update()
 time.sleep(1)
