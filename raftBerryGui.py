@@ -237,6 +237,7 @@ def speak(text):
 	subprocess.Popen(["espeak", "-v", "female3", text], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def serialIO(outCmd):
+	ser.write('Y');
 	if ser.inWaiting() > 0: 
 		inCmd=ser.read()
 		print("Received command: "+ str(inCmd))
