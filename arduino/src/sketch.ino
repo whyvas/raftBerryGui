@@ -312,7 +312,7 @@ void joyRight(){
 
 void execCmd() {
 	if (Serial.available() > 0) {
-		//Check if in manual mode before doing motor adjustments.
+		receivedChar=Serial.read();
 		if (digitalRead(AUTOMAN)==HIGH){
 			if (receivedChar=='A'){
 				leftspeed=3;
@@ -376,9 +376,11 @@ void execCmd() {
 			}	
 		}
 		if (receivedChar=='Q' && (digitalRead(ARMKEYS)==LOW) && (digitalRead(LAUNCHMISSILE)==LOW)){
-			digitalWrite(MISSILERELAY,LOW);	
+			digitalWrite(MISSILERELAY,LOW);
+			delay(1000);
+			digitalWrite(MISSILERELAY,HIGH);
 		}	
-		
+	receivedChar=' ';	
 	}
 	//Check arm key switch status
 	if ((armKeysState == 0) && (digitalRead(ARMKEYS)==LOW)){
