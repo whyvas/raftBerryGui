@@ -64,7 +64,7 @@ digitalWrite(MISSILERELAY,HIGH);
 void loop(){
       if (digitalRead(AUTOMAN)==LOW){
         motorsOff();
-        Serial.print("raftberry manual mode\n");
+        //Serial.print("raftberry manual mode\n");
         leftspeed = 0;
         rightspeed = 0;
         setSpeed();
@@ -91,7 +91,7 @@ void loop(){
 }
 	
 	if (digitalRead(AUTOMAN)==HIGH){
-		Serial.print("auto mode\n");
+		//Serial.print("auto mode\n");
 		while(digitalRead(AUTOMAN)==HIGH){
 				execCmd();
 			}
