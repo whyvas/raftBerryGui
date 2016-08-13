@@ -13,14 +13,17 @@ void joyUp();
 void joyDown();
 void joyLeft();
 void joyRight();
-int turnOffset(int chead,int dhead);
-int getBearing();
-float haversine(float lat1, float lon1, float lat2, float lon2);
-int bearing(float lat1, float lon1, float lat2, float lon2);
-int findClosest();
-void autoSpeed();
+void execCmd();
 #line 1 "src/sketch.ino"
-//GPIO connections
+//This is the Arduino portion of the raftBerry project. It can be directly uploaded to an arduino mega from the pi by using
+//the command ino upload. (Install arduino on the pi)
+
+//Pin Definitions
+//PORT* are for motor on left side, one pin controlling each of the low, medium, high speed and direction (h-bridge) relays.
+//STAR* are the same as PORT* but for the righthand motor.
+//JOY is for the 4 joystick input switches
+//SHUTDOWN is for the emergency shutdown button
+//AUTOMAN is for the automatic/manual navigation selection switch.
 
 #define PORTDIR 8
 #define PORTLOW 9
@@ -36,17 +39,25 @@ void autoSpeed();
 #define JOYRIGHT 46
 #define SHUTDOWN 42
 #define AUTOMAN 44
+#define MISSILERELAY 40
+#define ARMKEYS 38
+#define LAUNCHMISSILE 36
 
 //Global Variables
 int leftspeed = 0;
 int rightspeed = 0;
-
+char receivedChar;
+bool armKeysState = 0;
+bool launchButtonState = 0;
 
 void setup() {  
   Serial.begin(115200);
 
-//Setup GPIO pins    
+//Setup pins    
 pinMode(AUTOMAN, INPUT_PULLUP);
+pinMode(ARMKEYS, INPUT_PULLUP);
+pinMode(LAUNCHMISSILE, INPUT_PULLUP);
+pinMode(MISSILERELAY, OUTPUT);
 pinMode(PORTDIR, OUTPUT);
 pinMode(PORTLOW, OUTPUT);
 pinMode(PORTMED, OUTPUT);
@@ -60,12 +71,17 @@ pinMode(JOYDOWN, INPUT_PULLUP);
 pinMode(JOYLEFT, INPUT_PULLUP);
 pinMode(JOYRIGHT, INPUT_PULLUP);
 pinMode(SHUTDOWN, INPUT_PULLUP);
+
+//Turn off missile relay
+digitalWrite(MISSILERELAY,HIGH);
 }
 
+//Main program loop, if manual mode is selected, scan user inputs and control relays accordingly, otherwise go
+//into automatic mode and await navigation input from the pi via serial.
 void loop(){
       if (digitalRead(AUTOMAN)==LOW){
         motorsOff();
-        Serial.print("raftBerry manual mode\n");
+        //Serial.print("raftberry manual mode\n");
         leftspeed = 0;
         rightspeed = 0;
         setSpeed();
@@ -86,11 +102,21 @@ void loop(){
           if(digitalRead(JOYRIGHT) ==LOW){
             joyRight();
           }
+          execCmd();
           delay(500);
         }
 }
-Serial.print("Auto Mode\n");
+	
+	if (digitalRead(AUTOMAN)==HIGH){
+		//Serial.print("auto mode\n");
+		while(digitalRead(AUTOMAN)==HIGH){
+				execCmd();
+			}
+	}
+	
 }
+
+
 //Function to turn off all motors
 void motorsOff(){
   digitalWrite(STARHIGH, HIGH);
@@ -106,7 +132,7 @@ void motorsOff(){
 
 //Turn off motors, cleanup GPIO and shutdown.
 void emergencyStop(){
-  Serial.print("Emergency stop button pressed\n");
+  //Serial.print("Emergency stop button pressed\n");
   leftspeed=0;
   rightspeed=0;
   motorsOff();
@@ -119,103 +145,101 @@ void setSpeed(){
     digitalWrite(STARMED,LOW);
     digitalWrite(STARLOW,LOW);
     digitalWrite(STARDIR,HIGH);
-    Serial.print(String("\nSet Right:") + rightspeed);
+    //Serial.print(String("\nSet Right:") + rightspeed);
   }
   else if (rightspeed==2){
     digitalWrite(STARHIGH,HIGH);
     digitalWrite(STARMED,LOW);
     digitalWrite(STARLOW,LOW);
     digitalWrite(STARDIR,HIGH);
-    Serial.print(String("\nSet Right:") +rightspeed);
+    //Serial.print(String("\nSet Right:") +rightspeed);
   }
   else if (rightspeed==1){
     digitalWrite(STARHIGH,HIGH);
     digitalWrite(STARMED,HIGH);
     digitalWrite(STARLOW,LOW);
     digitalWrite(STARDIR,HIGH);
-    Serial.print(String("\nSet Right:") +rightspeed);
+    //Serial.print(String("\nSet Right:") +rightspeed);
   }
   else if (rightspeed==0){
     digitalWrite(STARHIGH,HIGH);
     digitalWrite(STARMED,HIGH);
     digitalWrite(STARLOW,HIGH);
     digitalWrite(STARDIR,HIGH);
-    Serial.print(String("\nSet Right:") +rightspeed);
+    //Serial.print(String("\nSet Right:") +rightspeed);
   }
   else if (rightspeed==-1){
     digitalWrite(STARHIGH,HIGH);
     digitalWrite(STARMED,HIGH);
     digitalWrite(STARLOW,LOW);
     digitalWrite(STARDIR,LOW);
-    Serial.print(String("\nSet Right:") + rightspeed);
+    //Serial.print(String("\nSet Right:") + rightspeed);
   }
   else if (rightspeed==-2){
     digitalWrite(STARHIGH,HIGH);
     digitalWrite(STARMED,LOW);
     digitalWrite(STARLOW,LOW);
     digitalWrite(STARDIR,LOW);
-    Serial.print(String("\nSet Right:")+ rightspeed);
+    //Serial.print(String("\nSet Right:")+ rightspeed);
   }
   else if (rightspeed==-3){
     digitalWrite(STARHIGH,LOW);
     digitalWrite(STARMED,LOW);
     digitalWrite(STARLOW,LOW);
     digitalWrite(STARDIR,LOW);
-    Serial.print(String("\nSet Right:") + rightspeed);
+    //Serial.print(String("\nSet Right:") + rightspeed);
   }
   if (leftspeed==3){
     digitalWrite(PORTHIGH,LOW);
     digitalWrite(PORTMED,LOW);
     digitalWrite(PORTLOW,LOW);
     digitalWrite(PORTDIR,HIGH);
-    Serial.print(String("\nSet Left:") +leftspeed);
+    //Serial.print(String("\nSet Left:") +leftspeed);
   }
 else if (leftspeed==2){
     digitalWrite(PORTHIGH,HIGH);
     digitalWrite(PORTMED,LOW);
     digitalWrite(PORTLOW,LOW);
     digitalWrite(PORTDIR,HIGH);
-    Serial.print(String("\nSet Left:") +leftspeed);
+    //Serial.print(String("\nSet Left:") +leftspeed);
 }
 else if (leftspeed==1){
     digitalWrite(PORTHIGH,HIGH);
     digitalWrite(PORTMED,HIGH);
     digitalWrite(PORTLOW,LOW);
     digitalWrite(PORTDIR,HIGH);
-    Serial.print(String("\nSet Left:") +leftspeed);
+    //Serial.print(String("\nSet Left:") +leftspeed);
 }
 else if (leftspeed==0){
     digitalWrite(PORTHIGH,HIGH);
     digitalWrite(PORTMED,HIGH);
     digitalWrite(PORTLOW,HIGH);
     digitalWrite(PORTDIR,LOW);
-    Serial.print(String("\nSet Left:") +leftspeed);
+    //Serial.print(String("\nSet Left:") +leftspeed);
 }
   else if (leftspeed==-1){
     digitalWrite(PORTHIGH,HIGH);
     digitalWrite(PORTMED,HIGH);
     digitalWrite(PORTLOW,LOW);
     digitalWrite(PORTDIR,LOW);
-    Serial.print(String("\nSet Left:") +leftspeed);
+    //Serial.print(String("\nSet Left:") +leftspeed);
   }
   else if (leftspeed==-2){
     digitalWrite(PORTHIGH,HIGH);
     digitalWrite(PORTMED,LOW);
     digitalWrite(PORTLOW,LOW);
     digitalWrite(PORTDIR,LOW);
-    Serial.print(String("\nSet Left:") +leftspeed);
+    //Serial.print(String("\nSet Left:") +leftspeed);
   }
   else if (leftspeed==-3){
     digitalWrite(PORTHIGH,LOW);
     digitalWrite(PORTMED,LOW);
     digitalWrite(PORTLOW,LOW);
     digitalWrite(PORTDIR,LOW);
-    Serial.print(String("\nSet Left:") +leftspeed);
+    //Serial.print(String("\nSet Left:") +leftspeed);
   }
 }
 
-
-//increase left by 1, if left = 7 and right doesn't = 0, decrease right by 1
 void decLeft(){
    if (leftspeed > -3){
     leftspeed-=1;
@@ -245,103 +269,156 @@ void decRight(){
 
 //Read joystick inputs  
 void joyUp(){
-  Serial.print("\nJoystick up");
+//  Serial.print("\nJoystick up");
   if (leftspeed < 3){
     leftspeed+=1;
   }
   if (rightspeed < 3){
       rightspeed+=1;
   }
-  Serial.print(String("Left:") + leftspeed + String("Right:") +rightspeed);
+//  Serial.print(String("Left:") + leftspeed + String("Right:") +rightspeed);
   setSpeed();
 }
 void joyDown(){
-  Serial.print("\nJoystick down");
+ // Serial.print("\nJoystick down");
   if (leftspeed > -3){
     leftspeed-=1;
   }
   if (rightspeed > -3){
     rightspeed-=1;
   }
-  Serial.print(String("Left:") + leftspeed + String("Right:") +rightspeed);
+  //Serial.print(String("Left:") + leftspeed + String("Right:") +rightspeed);
   setSpeed();
   }
 void joyLeft(){
-  Serial.print("\nJoystick left");
+  //Serial.print("\nJoystick left");
   incRight();
-  Serial.print(String("Left:") + leftspeed + String("Right:") +rightspeed);
+  //Serial.print(String("Left:") + leftspeed + String("Right:") +rightspeed);
   setSpeed();
 }
 void joyRight(){
-  Serial.print("\nJoystick right");
+  //Serial.print("\nJoystick right");
   incLeft();
-  Serial.print(String("Left:") + leftspeed + String("Right:") +rightspeed);
+  //Serial.print(String("Left:") + leftspeed + String("Right:") +rightspeed);
   setSpeed();
 }
 
+//The following function reads single characters from the serial port and reacts accoding to the following table:
+//INPUTS
+//A = set PORT to high forward
+//B = set PORT to medium forward
+//C = set PORT to low forward
+//D = set PORT to OFF
+//E = set PORT to low reverse
+//F = set PORT to medium reverse
+//G = set PORT to high reverse
+//H = set STAR to high forward
+//I = set STAR to medium forward
+//J = set STAR to low forward
+//K = set STAR to OFF
+//L = set STAR to low reverse
+//M = set STAR to medium reverse
+//N = set STAR to high reverse
+//O = launch missiles
 
-// CHECK ME              Function that returns the angle remaining to get to desired bearing. Negative for left, positive for right.
-int turnOffset(int chead,int dhead){
-  if (chead > dhead){
-    if ((chead-dhead) >= 180){
-      return(360-chead+dhead);
-      }
-  }
-  else{
-    return((chead-dhead)*-1);
-    }
-  if (chead < dhead){
-      if ((dhead-chead) >= 180){
-        return((360-dhead+chead)*-1);
-        }
-      else{
-        return(dhead-chead);
-        }
-    }
+//OUTPUTS
+//P = Arm keys enabled
+//Q = Arm keys disabled
+//R = Launch Missile enabled
+//S = Launch Missile disabled
+
+void execCmd() {
+	if (Serial.available() > 0) {
+		receivedChar=Serial.read();
+		if (digitalRead(AUTOMAN)==HIGH){
+			if (receivedChar=='A'){
+				leftspeed=3;
+				setSpeed();
+			}
+			if (receivedChar=='A'){
+				leftspeed=3;
+				setSpeed();
+			}
+			if (receivedChar=='B'){
+				leftspeed=2;
+				setSpeed();
+			}
+			if (receivedChar=='C'){
+				leftspeed=1;
+				setSpeed();
+			}	
+			if (receivedChar=='D'){
+				leftspeed=0;
+				setSpeed();
+			}	
+			if (receivedChar=='E'){
+				leftspeed=-1;
+				setSpeed();
+			}	
+			if (receivedChar=='F'){
+				leftspeed=-2;
+				setSpeed();
+			}	
+			if (receivedChar=='G'){
+				leftspeed=-3;
+				setSpeed();
+			}	
+			if (receivedChar=='H'){
+				rightspeed=3;
+				setSpeed();
+			}	
+			if (receivedChar=='I'){
+				rightspeed=2;
+				setSpeed();
+			}	
+			if (receivedChar=='J'){
+				rightspeed=1;
+				setSpeed();
+			}	
+			if (receivedChar=='K'){
+				rightspeed=0;
+				setSpeed();
+			}	
+			if (receivedChar=='L'){
+				rightspeed=-1;
+				setSpeed();
+			}	
+			if (receivedChar=='M'){
+				rightspeed=-2;
+				setSpeed();
+			}	
+			if (receivedChar=='N'){
+				rightspeed=-3;
+				setSpeed();
+			}	
+		}
+		if (receivedChar=='Q' && (digitalRead(ARMKEYS)==LOW) && (digitalRead(LAUNCHMISSILE)==LOW)){
+			digitalWrite(MISSILERELAY,LOW);
+			delay(1000);
+			digitalWrite(MISSILERELAY,HIGH);
+		}	
+	receivedChar=' ';	
+	}
+	//Check arm key switch status
+	if ((armKeysState == 0) && (digitalRead(ARMKEYS)==LOW)){
+		armKeysState = 1;
+		Serial.write('P');
+		delay(100);
+	}
+	if ((armKeysState == 1) && (digitalRead(ARMKEYS) == HIGH)){
+		armKeysState = 0;
+		Serial.write('Q');
+		delay(100);
+	}
+	//Check Launch Missile Button Status
+	if ((launchButtonState == 0) && (digitalRead(LAUNCHMISSILE) == LOW)){
+		launchButtonState = 1;
+		Serial.write('R');
+		delay(100);
+	}
+	if ((launchButtonState == 1) && (digitalRead(LAUNCHMISSILE) == HIGH)){
+		launchButtonState = 0;
+		Serial.write('S');
+		delay(100);
+	}
 }
-
-//CHECK ME               Find arduino function to read current bearing, using khalman filter.
-int getBearing(){
-  return 69;
-}
- 
-//CHECK ME               Haversine function to return distance between two coordinates
-float haversine(float lat1, float lon1, float lat2, float lon2){
-  float R = 6372.8; // Earth radius in kilometers
-  float dLat = radians(lat2 - lat1);
-  float dLon = radians(lon2 - lon1);
-  lat1 = radians(lat1);
-  lat2 = radians(lat2);
-  float a = pow(sin(dLat/2),2) + cos(lat1)*cos(lat2)*pow(sin(dLon/2),2);
-  float c = 2*asin(sqrt(a));
-  return R * c * 1000;
-}
-  
-//Function to calculate the bearing between two waypoints.
-int bearing(float lat1, float lon1, float lat2, float lon2){
-  float rlat1 = radians(lat1);
-  float rlat2 = radians(lat2);
-  float rlon1 = radians(lon1);
-  float rlon2 = radians(lon2);
-  float dlon = radians(lon2-lon1);
-  float b = atan2(sin(dlon)*cos(rlat2),cos(rlat1)*sin(rlat2)-sin(rlat1)*cos(rlat2)*cos(dlon)); // bearing calc
-  float bd = degrees(b);
-  float bn = (bd+360 % 360); // the bearing remainder and final bearing
-  return bn;
-}
-  
-//CHECK ME                Function to return the closest waypoint to current position
-int findClosest(){
-        return 1;
-}
-//CHECK ME                 Set the speed and direction based on turn offset
-void autoSpeed(){
-  
-  }
-  
-
-
-
-
-
-
