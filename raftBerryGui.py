@@ -310,7 +310,7 @@ def serialIO(outCmd):
 				sats+=inCmd
 				inCmd=ser.read()
 			print(sats)
-			inCmd=ser.read()
+			
 	elif (outCmd!='0'):
 		print("Sending out command: "+str(outCmd))
 		ser.write(outCmd)
