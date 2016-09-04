@@ -269,7 +269,7 @@ def serialIO(outCmd):
 	global lat;
 	global lon;
 	global sats;
-	self.controller = controller
+	
 	
 	#Add trys to this
 	if ser.inWaiting() > 0: 
