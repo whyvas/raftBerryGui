@@ -410,8 +410,7 @@ void execCmd() {
 		Serial.write('S');
 		delay(100);
 	}
-	//Read GPS data
-	Serial.print("Checking GPS\n\r");
+	//Read & Send GPS data
 	bool newData = false;
 	while(newData==false){
 		while (Serial2.available())
@@ -429,7 +428,7 @@ void execCmd() {
 				Serial.print("U");
 				Serial.print(flon,6);
 				Serial.print("V");
-				Serial.print(gps.satellites());
+				Serial.println(gps.satellites());
 	    			Serial.print("W");
 	  		}
 	
