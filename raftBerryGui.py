@@ -289,20 +289,24 @@ def serialIO(outCmd):
 		if inCmd=='T':
 			print("Reading GPS")
 			lat=""
+			inCmd=ser.read()
 			while(inCmd!="U"):
 				lat+=inCmd
 				inCmd=ser.read()
 			print(lat)
 			lon=""
+			inCmd=ser.read()
 			while(inCmd!="V"):
 				lon+=inCmd
 				inCmd=ser.read()
 			print(lon)
 			sats=""
+			inCmd=ser.read()
 			while(inCmd!="W"):
 				sats+=inCmd
 				inCmd=ser.read()
 			print(sats)
+			inCmd=ser.read()
 	elif (outCmd!='0'):
 		print("Sending out command: "+str(outCmd))
 		ser.write(outCmd)
