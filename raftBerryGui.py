@@ -266,6 +266,7 @@ def serialIO(outCmd):
 	global accessCode;
 	global lat;
 	global lon;
+	global sats;
 	
 	#Add trys to this
 	if ser.inWaiting() > 0: 
@@ -292,8 +293,16 @@ def serialIO(outCmd):
 				lat+=inCmd
 				inCmd=ser.read()
 			print(lat)
-		
-		
+			lon=""
+			while(inCmd!="V"):
+				lon+=inCmd
+				inCmd=ser.read()
+			print(lon)
+			sats=""
+			while(inCmd!="W"):
+				sats+=inCmd
+				inCmd=ser.read()
+			print(sats)
 	elif (outCmd!='0'):
 		print("Sending out command: "+str(outCmd))
 		ser.write(outCmd)
@@ -310,12 +319,13 @@ print(ser.name)
 app = raftBerry()
 #Make the app fullscreen to maximize touchscreen button size.
 code=""
-armKeysActivated = 0;
-launchButtonActivated = 0;
-launchInit=0;
-accessCode=0;
-lat="latString";
-lon="lonString";
+armKeysActivated = 0
+launchButtonActivated = 0
+launchInit=0
+accessCode=0
+sats="satsString"
+lat="latString"
+lon="lonString"
 
 app.attributes("-fullscreen", True)
 app.config(cursor='none')
