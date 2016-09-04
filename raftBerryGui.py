@@ -138,7 +138,7 @@ class MapPage(ttk.Frame):
                 self.rowconfigure(y, weight=1)
         label = ttk.Label(self, text="Maps").grid(row=0, column=0, sticky="NSEW", columnspan=2)
         
-        latString = StringVar() # use Tk's StringVar
+        self.latString = StringVar() # use Tk's StringVar
         self.latString.set("Variable2")
         lat = Label(self, textvariable=self.latString) # bind a StringVar to textvariable attr
         lat.grid( row = 1, column = 1, columnspan = 2, sticky = W+E+N+S )
