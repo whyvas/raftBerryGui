@@ -269,6 +269,7 @@ def serialIO(outCmd):
 	global lat;
 	global lon;
 	global sats;
+	self.controller = controller
 	
 	#Add trys to this
 	if ser.inWaiting() > 0: 
@@ -296,7 +297,7 @@ def serialIO(outCmd):
 				lat+=inCmd
 				inCmd=ser.read()
 			print(lat)
-			self.latString.set(lat)
+			self.controller.lat.set(lat)
 			lon=""
 			inCmd=ser.read()
 			while(inCmd!="V"):
