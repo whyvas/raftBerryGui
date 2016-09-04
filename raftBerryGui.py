@@ -137,6 +137,12 @@ class MapPage(ttk.Frame):
         for y in range(2):
                 self.rowconfigure(y, weight=1)
         label = ttk.Label(self, text="Maps").grid(row=0, column=0, sticky="NSEW", columnspan=2)
+        
+        latString = StringVar() # use Tk's StringVar
+        self.latString.set("Variable2")
+        lat = Label(self, textvariable=self.latString) # bind a StringVar to textvariable attr
+        lat.grid( row = 1, column = 1, columnspan = 2, sticky = W+E+N+S )
+        
         Mbutton =ttk.Button(self,text="Main Page",command=lambda:controller.show_frame(StartPage)).grid(row=1, column=0, sticky="NSEW")
 
 class LightPage(ttk.Frame):
