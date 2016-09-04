@@ -297,7 +297,7 @@ def serialIO(outCmd):
 				lat+=inCmd
 				inCmd=ser.read()
 			print(lat)
-			self.controller.lat.set(lat)
+			controller.lat.set(lat)
 			lon=""
 			inCmd=ser.read()
 			while(inCmd!="V"):
