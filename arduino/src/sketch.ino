@@ -413,24 +413,25 @@ void execCmd() {
 	//Read GPS data
 	Serial.print("Checking GPS\n\r");
 	bool newData = false;
-	delay(500);
-	while (Serial2.available())
-    	{
-      		char c = Serial2.read();
-      		if (gps.encode(c)) // Did a new valid sentence come in?
-        		newData = true;
-    		}
-		if (newData)
-  		{
-    			float flat, flon;
-    			gps.f_get_position(&flat, &flon);
-    			Serial.print("T");
-			Serial.print(flat,6);
-			Serial.print("U");
-			Serial.print(flon,6);
-			Serial.print("V");
-			Serial.print(gps.satellites());
-    			Serial.print("W");
-  		}
-
+	while(newData==false){
+		while (Serial2.available())
+	    	{
+	      		char c = Serial2.read();
+	      		if (gps.encode(c)) // Did a new valid sentence come in?
+	        		newData = true;
+	    		}
+			if (newData)
+	  		{
+	    			float flat, flon;
+	    			gps.f_get_position(&flat, &flon);
+	    			Serial.print("T");
+				Serial.print(flat,6);
+				Serial.print("U");
+				Serial.print(flon,6);
+				Serial.print("V");
+				Serial.print(gps.satellites());
+	    			Serial.print("W");
+	  		}
+	
+	}
 }
