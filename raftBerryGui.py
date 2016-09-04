@@ -294,7 +294,7 @@ def serialIO(outCmd):
 				lat+=inCmd
 				inCmd=ser.read()
 			print(lat)
-			MapPage.latString.set(lat)
+			self.latString.set(lat)
 			lon=""
 			inCmd=ser.read()
 			while(inCmd!="V"):
