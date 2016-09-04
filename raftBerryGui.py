@@ -264,6 +264,8 @@ def serialIO(outCmd):
 	global launchButtonActivated;
 	global launchInit;
 	global accessCode;
+	global lat;
+	global lon;
 	
 	#Add trys to this
 	if ser.inWaiting() > 0: 
@@ -283,6 +285,13 @@ def serialIO(outCmd):
 		if inCmd=='S':
 			print("Launch Button Deactivated")
 			launchButtonActivated = 0
+		if inCmd=='T':
+			print("Reading GPS")
+			lat=""
+			while(inCmd!="U"):
+				lat+=inCmd
+				inCmd=ser.read()
+			print(lat)
 		
 		
 	elif (outCmd!='0'):
@@ -305,6 +314,8 @@ armKeysActivated = 0;
 launchButtonActivated = 0;
 launchInit=0;
 accessCode=0;
+lat="latString";
+lon="lonString";
 
 app.attributes("-fullscreen", True)
 app.config(cursor='none')
