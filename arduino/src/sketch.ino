@@ -413,6 +413,7 @@ void execCmd() {
 	//Read GPS data
 	Serial.print("Checking GPS\n\r");
 	bool newData = false;
+	delay(500);
 	while (Serial2.available())
     	{
       		char c = Serial2.read();
