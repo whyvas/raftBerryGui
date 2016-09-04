@@ -20,6 +20,7 @@ class raftBerry(tk.Tk):
 	img = PhotoImage(file='/home/pi/raftBerryGui/images/raftBerryPi.gif')
 	self.tk.call('wm', 'iconphoto', self._w, img)
 
+	self.lat = StringVar()
 	self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 	#Set styles
@@ -140,7 +141,7 @@ class MapPage(ttk.Frame):
         label = ttk.Label(self, text="Maps").grid(row=0, column=0, sticky="NSEW", columnspan=2)
         
         self.latString = StringVar() # use Tk's StringVar
-        self.latString.set(lat)
+        self.latString.set(self.controller.lat.get())
         latLabel = Label(self, textvariable=self.latString) # bind a StringVar to textvariable attr
         latLabel.grid( row = 1, column = 1, columnspan = 2, sticky = W+E+N+S )
         
