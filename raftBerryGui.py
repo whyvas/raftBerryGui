@@ -133,8 +133,8 @@ class MapPage(ttk.Frame):
 
     def __init__(self, parent, controller):
         ttk.Frame.__init__(self,parent)
-        global lat
-	for x in range(1):
+        self.controller = controller
+        for x in range(1):
                 self.columnconfigure(x, weight=1)
         for y in range(2):
                 self.rowconfigure(y, weight=1)
