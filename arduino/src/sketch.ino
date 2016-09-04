@@ -1,5 +1,7 @@
 //This is the Arduino portion of the raftBerry project. It can be directly uploaded to an arduino mega from the pi by using
 //the command ino upload. (Install arduino on the pi)
+#include <TinyGPS.h>
+TinyGPS gps;
 
 //Pin Definitions
 //PORT* are for motor on left side, one pin controlling each of the low, medium, high speed and direction (h-bridge) relays.
@@ -34,8 +36,8 @@ bool armKeysState = 0;
 bool launchButtonState = 0;
 
 void setup() {  
-  Serial.begin(115200);
-
+	Serial.begin(115200);
+	Serial2.begin(9600);
 //Setup pins    
 pinMode(AUTOMAN, INPUT_PULLUP);
 pinMode(ARMKEYS, INPUT_PULLUP);
@@ -309,6 +311,10 @@ void joyRight(){
 //Q = Arm keys disabled
 //R = Launch Missile enabled
 //S = Launch Missile disabled
+//T = GPS Start
+//U = Lat Done
+//V = Lon Done
+//W = Sats Done
 
 void execCmd() {
 	if (Serial.available() > 0) {
@@ -404,4 +410,25 @@ void execCmd() {
 		Serial.write('S');
 		delay(100);
 	}
+	//Read GPS data
+	bool newData = false;
+	while (Serial2.available())
+    	{
+      		char c = Serial2.read();
+      		if (gps.encode(c)) // Did a new valid sentence come in?
+        		newData = true;
+    		}
+		if (newData)
+  		{
+    			float flat, flon;
+    			gps.f_get_position(&flat, &flon);
+    			Serial.print("T");
+			Serial.print(flat,6);
+			Serial.print("U");
+			Serial.print(flon,6);
+			Serial.print("V");
+			Serial.print(gps.satellites());
+    			Serial.print("W");
+  		}
+
 }
