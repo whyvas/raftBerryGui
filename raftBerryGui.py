@@ -139,9 +139,9 @@ class MapPage(ttk.Frame):
         label = ttk.Label(self, text="Maps").grid(row=0, column=0, sticky="NSEW", columnspan=2)
         
         self.latString = StringVar() # use Tk's StringVar
-        self.latString.set("Variable2")
-        lat = Label(self, textvariable=self.latString) # bind a StringVar to textvariable attr
-        lat.grid( row = 1, column = 1, columnspan = 2, sticky = W+E+N+S )
+        self.latString.set(lat)
+        latLabel = Label(self, textvariable=self.latString) # bind a StringVar to textvariable attr
+        latLabel.grid( row = 1, column = 1, columnspan = 2, sticky = W+E+N+S )
         
         Mbutton =ttk.Button(self,text="Main Page",command=lambda:controller.show_frame(StartPage)).grid(row=1, column=0, sticky="NSEW")
 
